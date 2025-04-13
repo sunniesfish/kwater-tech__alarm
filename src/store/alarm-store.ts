@@ -1,41 +1,25 @@
 import { create } from "zustand";
+import { Alarm } from "../type/alarm-type";
 
-interface Alarm {
-  id: string;
-  time: string;
-  title: string;
-  isActive: boolean;
-  days: number[]; // 0: 일요일, 1: 월요일, ..., 6: 토요일
-}
+export type AlarmStore = {
+  alarmList: Alarm[];
+  addAlarm: (alarm: Alarm) => void;
+  setAlarmList: (alarmList: Alarm[]) => void;
+  getAlarm: (alarmId: string) => Alarm | undefined;
+  removeAlarm: (alarmId: string) => void;
+};
 
-interface AlarmState {
-  alarms: Alarm[];
-  addAlarm: (alarm: Omit<Alarm, "id">) => void;
-  removeAlarm: (id: string) => void;
-  toggleAlarm: (id: string) => void;
-  updateAlarm: (id: string, alarm: Partial<Omit<Alarm, "id">>) => void;
-}
-
-export const useAlarmStore = create<AlarmState>((set) => ({
-  alarms: [],
-  addAlarm: (alarm) =>
+export const useAlarmStore = create<AlarmStore>((set, get) => ({
+  alarmList: [],
+  addAlarm: (alarm: Alarm) =>
+    set((state) => ({ alarmList: [...state.alarmList, alarm] })),
+  setAlarmList: (alarmList: Alarm[]) => set({ alarmList }),
+  getAlarm: (alarmId: string) => {
+    const alarm = get().alarmList.find((alarm) => alarm.id === alarmId);
+    return alarm;
+  },
+  removeAlarm: (alarmId: string) =>
     set((state) => ({
-      alarms: [...state.alarms, { ...alarm, id: crypto.randomUUID() }],
-    })),
-  removeAlarm: (id) =>
-    set((state) => ({
-      alarms: state.alarms.filter((alarm) => alarm.id !== id),
-    })),
-  toggleAlarm: (id) =>
-    set((state) => ({
-      alarms: state.alarms.map((alarm) =>
-        alarm.id === id ? { ...alarm, isActive: !alarm.isActive } : alarm
-      ),
-    })),
-  updateAlarm: (id, updatedAlarm) =>
-    set((state) => ({
-      alarms: state.alarms.map((alarm) =>
-        alarm.id === id ? { ...alarm, ...updatedAlarm } : alarm
-      ),
+      alarmList: state.alarmList.filter((alarm) => alarm.id !== alarmId),
     })),
 }));
