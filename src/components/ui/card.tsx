@@ -83,7 +83,10 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
 
 function CardRow({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <Card className={cn("flex items-center px-6", className)} {...props} />
+    <Card
+      className={cn("flex flex-row items-center px-6 ", className)}
+      {...props}
+    />
   );
 }
 

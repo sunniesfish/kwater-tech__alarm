@@ -10,11 +10,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Day } from "@/type/alarm-type";
 import { Checkbox } from "../ui/checkbox";
 import { useMusicStore } from "@/store/music-store";
 import { useAlarm } from "@/lib/use-alarm";
+import { useForm, Controller } from "react-hook-form";
+import { useAlarmDockStore } from "@/store/dock-store";
+interface AlarmFormValues {
+  title: string;
+  day: Day[];
+  hour: string;
+  minute: string;
+  repeat: boolean;
+  musicId: string;
+}
 
 export default function AlarmMutation() {
   const getCurrentTimeAndDay = () => {
@@ -52,163 +62,207 @@ export default function AlarmMutation() {
     }
 
     return {
-      hour: currentHour,
-      minute: currentMinute,
+      hour: currentHour.toString(),
+      minute: currentMinute.toString(),
       day: [currentDay],
     };
   };
 
   const currentTime = getCurrentTimeAndDay();
-
-  const [day, setDay] = useState<Day[]>(currentTime.day);
-  const [hour, setHour] = useState<number>(currentTime.hour);
-  const [minute, setMinute] = useState<number>(currentTime.minute);
-  const [title, setTitle] = useState<string>("");
-  const [repeat, setRepeat] = useState<boolean>(false);
-  const [musicId, setMusicId] = useState<string>("1");
   const { musicList } = useMusicStore();
   const { createAlarm } = useAlarm();
+  const { setIsAddMode } = useAlarmDockStore();
+
+  const { control, handleSubmit, setValue, watch } = useForm<AlarmFormValues>({
+    defaultValues: {
+      title: "",
+      day: currentTime.day,
+      hour: currentTime.hour,
+      minute: currentTime.minute,
+      repeat: false,
+      musicId: "no-music",
+    },
+  });
+
+  const watchMusicId = watch("musicId");
 
   useEffect(() => {
-    if (musicList.length > 0 && musicId === "1") {
-      setMusicId(musicList[0].id);
+    if (musicList.length > 0 && watchMusicId === "no-music") {
+      setValue("musicId", musicList[0].id);
     }
-  }, [musicList, musicId]);
+  }, [musicList, watchMusicId, setValue]);
 
-  const handleDayChange = (value: string[]) => {
-    setDay(value as Day[]);
-  };
-
-  const handleHourChange = (value: string) => {
-    setHour(parseInt(value, 10));
-  };
-
-  const handleMinuteChange = (value: string) => {
-    setMinute(parseInt(value, 10));
-  };
-
-  const handleRepeatChange = () => {
-    setRepeat((prev) => !prev);
-  };
-
-  const handleMusicChange = (value: string) => {
-    if (value === "no-music") {
-      // 기본 음악
-    } else {
-      setMusicId(value);
-    }
-  };
-
-  const handleSubmit = () => {
+  const onSubmit = (data: AlarmFormValues) => {
     const now = new Date();
     const alarm = {
-      id: `${day.join("")}${hour}${minute}` + now.toISOString(),
-      title,
-      day,
-      hour,
-      minute,
-      musicId,
-      repeat,
+      id: `${data.day.join("")}${data.hour}${data.minute}` + now.toISOString(),
+      title: data.title.length > 0 ? data.title : "알림",
+      day: data.day,
+      hour: parseInt(data.hour, 10),
+      minute: parseInt(data.minute, 10),
+      musicId: data.musicId,
+      repeat: data.repeat,
     };
+    console.log("alarm", alarm);
     createAlarm(alarm);
+    setIsAddMode(false);
   };
 
   return (
-    <Card>
+    <Card className="bg-card">
       <CardHeader>
-        <CardTitle>알림 추가</CardTitle>
+        <CardTitle className="text-card-foreground">알림 추가</CardTitle>
       </CardHeader>
       <CardContent>
-        <form>
-          <div>
-            <Label htmlFor="title">제목</Label>
-            <Input
-              type="text"
-              id="title"
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="title" className="text-card-foreground">
+              제목
+            </Label>
+            <Controller
               name="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              control={control}
+              render={({ field }) => (
+                <Input
+                  type="text"
+                  id="title"
+                  className="bg-input text-foreground"
+                  {...field}
+                />
+              )}
             />
           </div>
-          <div>
-            <Label htmlFor="day">요일</Label>
-            <ToggleGroup
-              type="multiple"
-              id="day"
-              onValueChange={(value) => handleDayChange(value)}
-            >
-              {Object.values(Day).map((day) => (
-                <ToggleGroupItem key={day} value={day}>
-                  {day}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-          </div>
-          <div>
-            <Label htmlFor="repeat">반복</Label>
-            <Checkbox
-              id="repeat"
-              checked={repeat}
-              onCheckedChange={handleRepeatChange}
+          <div className="space-y-2">
+            <Label htmlFor="day" className="text-card-foreground">
+              요일
+            </Label>
+            <Controller
+              name="day"
+              control={control}
+              render={({ field }) => (
+                <ToggleGroup
+                  type="multiple"
+                  id="day"
+                  value={field.value}
+                  onValueChange={(value) => field.onChange(value as Day[])}
+                  className="flex flex-wrap gap-2"
+                >
+                  {Object.values(Day).map((day) => (
+                    <ToggleGroupItem
+                      key={day}
+                      value={day}
+                      variant="outline"
+                      className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:font-bold border-2 text-card-foreground"
+                    >
+                      {day}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              )}
             />
           </div>
-          <div>
-            <Label htmlFor="hour-select">시간</Label>
-            <Select value={hour.toString()} onValueChange={handleHourChange}>
-              <SelectTrigger id="hour-select">
-                <SelectValue placeholder="시간" />
-              </SelectTrigger>
-              <SelectContent>
-                {Array.from({ length: 24 }, (_, i) => (
-                  <SelectItem key={i} value={i.toString()}>
-                    {i.toString().padStart(2, "0")}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex items-center gap-2 space-y-0">
+            <Label htmlFor="repeat" className="flex-grow text-card-foreground">
+              반복
+            </Label>
+            <Controller
+              name="repeat"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  id="repeat"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              )}
+            />
           </div>
-          <div>
-            <Label htmlFor="minute-select">분</Label>
-            <Select
-              value={minute.toString()}
-              onValueChange={handleMinuteChange}
-            >
-              <SelectTrigger id="minute-select">
-                <SelectValue placeholder="분" />
-              </SelectTrigger>
-              <SelectContent>
-                {Array.from({ length: 60 }, (_, i) => (
-                  <SelectItem key={i} value={i.toString()}>
-                    {i.toString().padStart(2, "0")}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="space-y-2">
+            <Label htmlFor="hour-select" className="text-card-foreground">
+              시간
+            </Label>
+            <Controller
+              name="hour"
+              control={control}
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger
+                    id="hour-select"
+                    className="bg-input text-foreground"
+                  >
+                    <SelectValue placeholder="시간" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[200px] overflow-y-auto">
+                    {Array.from({ length: 24 }, (_, i) => (
+                      <SelectItem key={i} value={i.toString()}>
+                        {i.toString().padStart(2, "0")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
-          <div>
-            <Label htmlFor="music-select">음악</Label>
-            <Select
-              value={musicList.length > 0 ? musicId : "no-music"}
-              onValueChange={handleMusicChange}
-            >
-              <SelectTrigger id="music-select">
-                <SelectValue placeholder="음악" />
-              </SelectTrigger>
-              <SelectContent>
-                {musicList.length > 0 ? (
-                  musicList.map((music) => (
-                    <SelectItem key={music.id} value={music.id}>
-                      {music.name}
-                    </SelectItem>
-                  ))
-                ) : (
-                  <SelectItem value="no-music">음악 없음</SelectItem>
-                )}
-              </SelectContent>
-            </Select>
+          <div className="space-y-2">
+            <Label htmlFor="minute-select" className="text-card-foreground">
+              분
+            </Label>
+            <Controller
+              name="minute"
+              control={control}
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger
+                    id="minute-select"
+                    className="bg-input text-foreground"
+                  >
+                    <SelectValue placeholder="분" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[200px] overflow-y-auto">
+                    {Array.from({ length: 60 }, (_, i) => (
+                      <SelectItem key={i} value={i.toString()}>
+                        {i.toString().padStart(2, "0")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="music-select" className="text-card-foreground">
+              음악
+            </Label>
+            <Controller
+              name="musicId"
+              control={control}
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger
+                    id="music-select"
+                    className="bg-input text-foreground"
+                  >
+                    <SelectValue placeholder="음악" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {musicList.length > 0 ? (
+                      musicList.map((music) => (
+                        <SelectItem key={music.id} value={music.id}>
+                          {music.name}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="no-music">음악 없음</SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
+          <Button type="submit" className="w-full">
+            추가
+          </Button>
         </form>
-        <Button onClick={handleSubmit}>추가</Button>
       </CardContent>
     </Card>
   );

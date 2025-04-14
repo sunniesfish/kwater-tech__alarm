@@ -5,5 +5,5 @@ export default function ListWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  return <Card>{children}</Card>;
+  return <Card className="bg-card text-card-foreground">{children}</Card>;
 }

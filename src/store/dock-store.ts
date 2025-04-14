@@ -3,19 +3,31 @@ import { create } from "zustand";
 export type DockStore = {
   isDeleteMode: boolean;
   setIsDeleteMode: (isDeleteMode: boolean) => void;
-  isEditMode: boolean;
-  setIsEditMode: (isEditMode: boolean) => void;
+  isAddMode: boolean;
+  setIsAddMode: (isAddMode: boolean) => void;
 };
 
-export const useDockStore = create<DockStore>((set) => ({
+export const useAlarmDockStore = create<DockStore>((set) => ({
   isDeleteMode: false,
   setIsDeleteMode: (isDeleteMode: boolean) => {
     set({ isDeleteMode });
-    set({ isEditMode: false });
+    set({ isAddMode: false });
   },
-  isEditMode: false,
-  setIsEditMode: (isEditMode: boolean) => {
-    set({ isEditMode });
+  isAddMode: false,
+  setIsAddMode: (isAddMode: boolean) => {
+    set({ isAddMode });
+    set({ isDeleteMode: false });
+  },
+}));
+
+export const useMusicDockStore = create<DockStore>((set) => ({
+  isDeleteMode: false,
+  setIsDeleteMode: (isDeleteMode: boolean) => {
+    set({ isDeleteMode });
+  },
+  isAddMode: false,
+  setIsAddMode: (isAddMode: boolean) => {
+    set({ isAddMode });
     set({ isDeleteMode: false });
   },
 }));

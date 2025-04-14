@@ -26,6 +26,6 @@ export interface MusicDb extends DBSchema {
 export interface MusicStore {
   musicList: MusicMetadata[];
   setMusicList: (musicList: MusicMetadata[]) => void;
-  addMusic: (music: MusicMetadata) => void;
-  deleteMusic: (id: string) => void;
+  addMusic: (music: MusicMetadata) => () => void;
+  deleteMusic: (id: string) => () => void;
 }

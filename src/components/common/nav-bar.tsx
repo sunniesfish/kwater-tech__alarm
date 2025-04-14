@@ -3,17 +3,21 @@ import { useNavStore, View } from "../../store/nav-store";
 export default function NavBar() {
   const { current, setView } = useNavStore();
   return (
-    <nav className="w-full flex  justify-center items-center">
+    <nav className="w-full max-h-[60px] h-10 flex justify-center items-center bg-card">
       <ul className="w-full flex justify-evenly items-center">
         <li
           onClick={() => setView(View.Music)}
-          className={`${current === View.Music ? "active" : ""}`}
+          className={`text-card-foreground hover:text-primary ${
+            current === View.Music ? "text-primary" : ""
+          }`}
         >
           알람음
         </li>
         <li
           onClick={() => setView(View.Alarm)}
-          className={`${current === View.Alarm ? "active" : ""}`}
+          className={`text-card-foreground hover:text-primary ${
+            current === View.Alarm ? "text-primary" : ""
+          }`}
         >
           알람
         </li>

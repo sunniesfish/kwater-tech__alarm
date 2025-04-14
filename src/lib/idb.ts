@@ -1,4 +1,4 @@
-import { DB_NAME, STORE_NAME, MusicDb } from "@/type/music-type";
+import { DB_NAME, STORE_NAME, MusicDb, Music } from "@/type/music-type";
 import { openDB } from "idb";
 
 const musicDB = await openDB<MusicDb>(DB_NAME, 1, {
@@ -8,28 +8,54 @@ const musicDB = await openDB<MusicDb>(DB_NAME, 1, {
   },
 });
 
-export async function addMusic(musicfile: Blob, name: string) {
-  const size = musicfile.size;
+export async function addMusic(music: Music) {
+  const size = music.file.size;
   if (size > 10 * 1024 * 1024) {
     throw new Error("File size is too large");
   }
-  const music = {
-    id: crypto.randomUUID(),
-    name: name,
-    file: musicfile,
-    upload_date: new Date(),
-  };
-  await musicDB.add(STORE_NAME, music);
+  const tx = musicDB.transaction(STORE_NAME, "readwrite");
+  try {
+    await tx.store.add(music);
+    await tx.done;
+    return true;
+  } catch (error) {
+    tx.abort();
+    throw error;
+  }
 }
 
 export async function getMusicList() {
-  return await musicDB.getAllFromIndex(STORE_NAME, "by_date");
+  const tx = musicDB.transaction(STORE_NAME, "readonly");
+  try {
+    const list = await tx.store.index("by_date").getAll();
+    await tx.done;
+    return list;
+  } catch (error) {
+    tx.abort();
+    throw error;
+  }
 }
 
 export async function getMusic(id: string) {
-  return await musicDB.get(STORE_NAME, id);
+  const tx = musicDB.transaction(STORE_NAME, "readonly");
+  try {
+    const music = await tx.store.get(id);
+    await tx.done;
+    return music;
+  } catch (error) {
+    tx.abort();
+    throw error;
+  }
 }
 
 export async function deleteMusic(id: string) {
-  await musicDB.delete(STORE_NAME, id);
+  const tx = musicDB.transaction(STORE_NAME, "readwrite");
+  try {
+    await tx.store.delete(id);
+    await tx.done;
+    return true;
+  } catch (error) {
+    tx.abort();
+    throw error;
+  }
 }

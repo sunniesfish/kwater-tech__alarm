@@ -1,7 +1,7 @@
 export default function Header() {
   return (
-    <header>
-      <h1>Logo</h1>
+    <header className="bg-card text-card-foreground">
+      <h2>Logo</h2>
     </header>
   );
 }

@@ -36,6 +36,7 @@ class AlarmWorker {
 
   private setAlarmList(payload: SetAlarm["payload"]) {
     this.alarmList = payload.alarmList;
+    console.log("this.alarmList", this.alarmList);
     if (this.alarmList?.length > 0) {
       this.startTick();
     } else {

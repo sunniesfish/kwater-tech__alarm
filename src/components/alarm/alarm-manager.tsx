@@ -81,12 +81,14 @@ export function AlarmManager() {
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogContent className="bg-white">
+      <DialogContent className="bg-background text-foreground">
         <DialogHeader>
-          <DialogTitle>알람 종료</DialogTitle>
+          <DialogTitle className="text-foreground">알람 종료</DialogTitle>
         </DialogHeader>
         <DialogDescription className="flex justify-center items-center">
-          <Button onClick={handleStopAlarm}>종료</Button>
+          <Button variant="destructive" onClick={handleStopAlarm}>
+            종료
+          </Button>
         </DialogDescription>
       </DialogContent>
     </Dialog>

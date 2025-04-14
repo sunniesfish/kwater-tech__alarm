@@ -4,15 +4,21 @@ import { persist } from "zustand/middleware";
 
 export const useMusicStore = create<MusicStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       musicList: [],
       setMusicList: (musicList) => set({ musicList }),
-      addMusic: (music) =>
-        set((state) => ({ musicList: [...state.musicList, music] })),
-      deleteMusic: (id) =>
-        set((state) => ({
-          musicList: state.musicList.filter((music) => music.id !== id),
-        })),
+      addMusic: (music) => {
+        const prevState = get().musicList;
+        set({ musicList: [...prevState, music] });
+        const undoFn = () => set({ musicList: prevState });
+        return undoFn;
+      },
+      deleteMusic: (id) => {
+        const prevState = get().musicList;
+        set({ musicList: prevState.filter((music) => music.id !== id) });
+        const undoFn = () => set({ musicList: prevState });
+        return undoFn;
+      },
     }),
     {
       name: "music-storage",
