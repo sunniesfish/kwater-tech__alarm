@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { Alarm } from "../type/alarm-type";
 
 export type AlarmStore = {
@@ -9,17 +10,24 @@ export type AlarmStore = {
   removeAlarm: (alarmId: string) => void;
 };
 
-export const useAlarmStore = create<AlarmStore>((set, get) => ({
-  alarmList: [],
-  addAlarm: (alarm: Alarm) =>
-    set((state) => ({ alarmList: [...state.alarmList, alarm] })),
-  setAlarmList: (alarmList: Alarm[]) => set({ alarmList }),
-  getAlarm: (alarmId: string) => {
-    const alarm = get().alarmList.find((alarm) => alarm.id === alarmId);
-    return alarm;
-  },
-  removeAlarm: (alarmId: string) =>
-    set((state) => ({
-      alarmList: state.alarmList.filter((alarm) => alarm.id !== alarmId),
-    })),
-}));
+export const useAlarmStore = create<AlarmStore>()(
+  persist(
+    (set, get) => ({
+      alarmList: [],
+      addAlarm: (alarm: Alarm) =>
+        set((state) => ({ alarmList: [...state.alarmList, alarm] })),
+      setAlarmList: (alarmList: Alarm[]) => set({ alarmList }),
+      getAlarm: (alarmId: string) => {
+        const alarm = get().alarmList.find((alarm) => alarm.id === alarmId);
+        return alarm;
+      },
+      removeAlarm: (alarmId: string) =>
+        set((state) => ({
+          alarmList: state.alarmList.filter((alarm) => alarm.id !== alarmId),
+        })),
+    }),
+    {
+      name: "alarm-store",
+    }
+  )
+);

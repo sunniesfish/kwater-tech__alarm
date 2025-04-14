@@ -15,6 +15,7 @@ export function AlarmManager() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const ringAlarm = useMemo(() => {
+    console.log("ringAlarm");
     return async (musicId: string) => {
       const music = await getMusic(musicId);
       if (!music) {

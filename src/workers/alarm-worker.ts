@@ -26,18 +26,20 @@ class AlarmWorker {
   }
 
   private handleMessage(event: MessageEvent<AlarmMessage>) {
+    console.log("handleMessage", event);
     const { type, payload } = event.data;
     switch (type) {
       case AlarmMessageType.SET_ALARM:
+        console.log("SET_ALARM", payload);
         this.setAlarmList(payload);
         break;
     }
   }
 
-  private setAlarmList(payload: SetAlarm["payload"]) {
-    this.alarmList = payload.alarmList;
-    console.log("this.alarmList", this.alarmList);
+  private setAlarmList({ alarmList }: SetAlarm["payload"]) {
+    console.log("setAlarmList", alarmList);
     if (this.alarmList?.length > 0) {
+      this.alarmList = [...alarmList];
       this.startTick();
     } else {
       this.stopTick();

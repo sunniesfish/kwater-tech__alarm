@@ -53,6 +53,7 @@ export const useAlarmWorker = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sendMessage = useCallback((type: AlarmMessageType, payload: any) => {
+    console.log("sendMessage", type, payload);
     if (!workerRef.current) {
       throw new Error("Worker is not initialized");
     }
@@ -68,8 +69,9 @@ export const useAlarm = () => {
   const { alarmList, addAlarm, removeAlarm } = useAlarmStore();
 
   useEffect(() => {
-    sendMessage(AlarmMessageType.SET_ALARM, alarmList);
-  }, [alarmList, sendMessage]);
+    sendMessage(AlarmMessageType.SET_ALARM, { alarmList });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [alarmList]);
 
   const createAlarm = useCallback(
     (alarm: Alarm) => {
