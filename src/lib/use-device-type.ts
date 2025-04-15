@@ -12,6 +12,7 @@ type DeviceTypeOption =
   | DeviceType.Mobile;
 
 export const useDeviceType = (deviceTypeOption: DeviceTypeOption) => {
+  console.log("useDeviceType", deviceTypeOption);
   const query = (() => {
     switch (deviceTypeOption) {
       case DeviceType.Desktop:
@@ -29,15 +30,19 @@ export const useDeviceType = (deviceTypeOption: DeviceTypeOption) => {
   );
 
   useEffect(() => {
+    console.log("useEffect useDeviceType", query);
     const mediaQueryList = window.matchMedia(query);
     const handleChange = (event: MediaQueryListEvent) => {
       setMatches(event.matches);
     };
     mediaQueryList.addEventListener("change", handleChange);
-    setMatches(mediaQueryList.matches);
+
+    if (mediaQueryList.matches !== matches) {
+      setMatches(mediaQueryList.matches);
+    }
     return () => {
       mediaQueryList.removeEventListener("change", handleChange);
     };
-  }, [query]);
+  }, [query, matches]);
   return matches;
 };

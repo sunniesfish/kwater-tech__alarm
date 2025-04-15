@@ -1,16 +1,24 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useAlarmWorker } from "../../lib/use-alarm";
-import { AlarmMessageType, AlarmMessage, Alarm } from "../../type/alarm-type";
+import { useAlarmWorker } from "../../lib/use-alarm-worker";
+import { Alarm, AlarmMessageType, TriggerAlarm } from "../../type/alarm-type";
 import { useAlarmStore } from "../../store/alarm-store";
 import { getMusic } from "../../lib/idb";
 import { Dialog, DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import { DialogHeader } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { DialogContent } from "../ui/dialog";
+import { useShallow } from "zustand/react/shallow";
 
 export function AlarmManager() {
+  console.log("AlarmManager");
   const { registerHandler, sendMessage } = useAlarmWorker();
-  const { getAlarm, removeAlarm, alarmList } = useAlarmStore();
+  const { getAlarm, removeAlarm, alarmList } = useAlarmStore(
+    useShallow((state) => ({
+      getAlarm: state.getAlarm,
+      removeAlarm: state.removeAlarm,
+      alarmList: state.alarmList,
+    }))
+  );
   const activeAudioRef = useRef<HTMLAudioElement | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -53,7 +61,7 @@ export function AlarmManager() {
   };
 
   useEffect(() => {
-    const handleAlarmTriggered = ({ payload }: AlarmMessage) => {
+    const handleAlarmTriggered = (payload: TriggerAlarm["payload"]) => {
       const { alarmId } = payload;
       const alarm: Alarm | undefined = getAlarm(alarmId);
       if (!alarm) {

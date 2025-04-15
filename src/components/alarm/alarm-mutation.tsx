@@ -69,9 +69,9 @@ export default function AlarmMutation() {
   };
 
   const currentTime = getCurrentTimeAndDay();
-  const { musicList } = useMusicStore();
+  const musicList = useMusicStore((state) => state.musicList);
   const { createAlarm } = useAlarm();
-  const { setIsAddMode } = useAlarmDockStore();
+  const setIsAddMode = useAlarmDockStore((state) => state.setIsAddMode);
 
   const { control, handleSubmit, setValue, watch } = useForm<AlarmFormValues>({
     defaultValues: {
@@ -87,10 +87,12 @@ export default function AlarmMutation() {
   const watchMusicId = watch("musicId");
 
   useEffect(() => {
+    console.log("alarm mutation useEffect");
     if (musicList.length > 0 && watchMusicId === "no-music") {
       setValue("musicId", musicList[0].id);
     }
-  }, [musicList, watchMusicId, setValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [musicList, watchMusicId]);
 
   const onSubmit = (data: AlarmFormValues) => {
     const now = new Date();
@@ -103,7 +105,7 @@ export default function AlarmMutation() {
       musicId: data.musicId,
       repeat: data.repeat,
     };
-    console.log("alarm", alarm);
+    console.log("onSubmit alarm", alarm);
     createAlarm(alarm);
     setIsAddMode(false);
   };

@@ -31,17 +31,18 @@ class AlarmWorker {
     switch (type) {
       case AlarmMessageType.SET_ALARM:
         console.log("SET_ALARM", payload);
-        this.setAlarmList(payload);
+        this.setAlarmList({ alarmList: payload });
         break;
     }
   }
 
   private setAlarmList({ alarmList }: SetAlarm["payload"]) {
     console.log("setAlarmList", alarmList);
-    if (this.alarmList?.length > 0) {
+    if (alarmList?.length > 0) {
       this.alarmList = [...alarmList];
       this.startTick();
     } else {
+      this.alarmList = [];
       this.stopTick();
     }
   }
@@ -49,9 +50,10 @@ class AlarmWorker {
   private startTick(): void {
     if (this.tickInterval === undefined) {
       this.lastCheckTime = Date.now();
-      this.tickInterval = setInterval(() => {
-        this.checkAlarms.bind(this);
-      }, this.TICK_INTERVAL);
+      this.tickInterval = setInterval(
+        this.checkAlarms.bind(this),
+        this.TICK_INTERVAL
+      );
     }
   }
 
@@ -94,6 +96,7 @@ class AlarmWorker {
   }
 
   private checkAlarms(): void {
+    console.log("checkAlarms");
     this.checkTimeElapsed();
 
     this.alarmList.forEach((alarm) => {

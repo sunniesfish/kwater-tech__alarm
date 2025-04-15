@@ -1,4 +1,4 @@
-import { DialogTitle } from "@radix-ui/react-dialog";
+import { DialogTitle, DialogDescription } from "@radix-ui/react-dialog";
 import { Dialog, DialogContent } from "../ui/dialog";
 
 export default function ModalWrapper({
@@ -14,6 +14,7 @@ export default function ModalWrapper({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
         <DialogTitle className="hidden"></DialogTitle>
+        <DialogDescription className="hidden"></DialogDescription>
         {children}
       </DialogContent>
     </Dialog>

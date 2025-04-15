@@ -3,9 +3,12 @@ import ListWrapper from "../common/list-wrapper";
 import AlarmRow from "./alarm-row";
 import { useAlarm } from "@/lib/use-alarm";
 import { useAlarmDockStore } from "@/store/dock-store";
+import { useAlarmStore } from "@/store/alarm-store";
 export default function AlarmList() {
-  const { alarmList, deleteAlarm } = useAlarm();
-  const { setIsDeleteMode } = useAlarmDockStore();
+  console.log("AlarmList");
+  const { deleteAlarm } = useAlarm();
+  const setIsDeleteMode = useAlarmDockStore((state) => state.setIsDeleteMode);
+  const alarmList = useAlarmStore((state) => state.alarmList);
   const onDelete = useCallback(
     (id: string) => {
       deleteAlarm(id);
