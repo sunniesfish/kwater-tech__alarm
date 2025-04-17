@@ -10,7 +10,6 @@ import { DialogContent } from "../ui/dialog";
 import { useShallow } from "zustand/react/shallow";
 
 export function AlarmManager() {
-  console.log("AlarmManager");
   const { registerHandler, sendMessage } = useAlarmWorker();
   const { getAlarm, removeAlarm, alarmList, setAlarmList } = useAlarmStore(
     useShallow((state) => ({
@@ -24,7 +23,6 @@ export function AlarmManager() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const ringAlarm = useMemo(() => {
-    console.log("ringAlarm");
     return async (musicId: string) => {
       let audioUrl: string;
       let audio: HTMLAudioElement;

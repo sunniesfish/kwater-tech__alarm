@@ -95,7 +95,6 @@ export default function AlarmMutation() {
       repeat: data.repeat,
       lastTriggered: undefined,
     };
-    console.log("onSubmit alarm", alarm);
     createAlarm(alarm);
     setIsAddMode(false);
     reset();

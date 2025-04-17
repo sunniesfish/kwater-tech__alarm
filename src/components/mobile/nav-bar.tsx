@@ -1,7 +1,6 @@
 import { useNavStore, View } from "../../store/nav-store";
 
 export default function NavBar() {
-  console.log("NavBar");
   const { current, setView } = useNavStore();
   return (
     <nav className="w-full max-h-[60px] h-10 flex justify-center items-center bg-card">

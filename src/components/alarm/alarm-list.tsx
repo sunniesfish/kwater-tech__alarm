@@ -6,7 +6,6 @@ import { useAlarmStore } from "@/store/alarm-store";
 import AlarmMutationRow from "./alarm-mutation-row";
 import { DeviceType, useDeviceType } from "@/lib/use-device-type";
 export default function AlarmList() {
-  console.log("AlarmList");
   const isDesktop = useDeviceType(DeviceType.Desktop);
   const { deleteAlarm } = useAlarm();
   const alarmList = useAlarmStore((state) => state.alarmList);

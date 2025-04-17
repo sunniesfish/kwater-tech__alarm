@@ -4,7 +4,6 @@ import AlarmMutation from "./alarm-mutation";
 import { useShallow } from "zustand/react/shallow";
 
 export default function AlarmMutationModal() {
-  console.log("AlarmMutationModal");
   const { isAddMode, setIsAddMode } = useAlarmDockStore(
     useShallow((state) => ({
       isAddMode: state.isAddMode,
