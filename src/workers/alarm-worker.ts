@@ -26,18 +26,15 @@ class AlarmWorker {
   }
 
   private handleMessage(event: MessageEvent<AlarmMessage>) {
-    console.log("handleMessage", event);
     const { type, payload } = event.data;
     switch (type) {
       case AlarmMessageType.SET_ALARM:
-        console.log("SET_ALARM", payload);
         this.setAlarmList({ alarmList: payload });
         break;
     }
   }
 
   private setAlarmList({ alarmList }: SetAlarm["payload"]) {
-    console.log("setAlarmList", alarmList);
     if (alarmList?.length > 0) {
       this.alarmList = [...alarmList];
       this.startTick();
@@ -111,18 +108,15 @@ class AlarmWorker {
   }
 
   private checkAlarms(): void {
-    // console.log("checkAlarms");
-    // this.checkTimeElapsed();
-    // this.alarmList.forEach((alarm) => {
-    //   if (this.shouldTriggerAlarm(alarm)) {
-    //     this.triggerAlarm(alarm);
-    //   }
-    // });
+    this.checkTimeElapsed();
+    this.alarmList.forEach((alarm) => {
+      if (this.shouldTriggerAlarm(alarm)) {
+        this.triggerAlarm(alarm);
+      }
+    });
   }
 
   private triggerAlarm(alarm: Alarm): void {
-    console.log(`[AlarmWorker] Triggering alarm: ${alarm.id}`);
-
     self.postMessage({
       type: AlarmMessageType.TRIGGER_ALARM,
       payload: {

@@ -6,7 +6,6 @@ import { DeviceType, useDeviceType } from "./lib/use-device-type";
 import Footer from "./components/desktop/footer";
 
 function App() {
-  console.log("App");
   const isMobile = useDeviceType(DeviceType.Mobile);
   return (
     <>

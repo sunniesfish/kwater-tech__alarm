@@ -10,7 +10,7 @@ export default function AlarmMutationRow() {
     }))
   );
   return (
-    <div className="flex justify-end items-center  border border-red-500">
+    <div className="flex justify-end items-center">
       <Button variant="outline" onClick={() => setIsDeleteMode(!isDeleteMode)}>
         {isDeleteMode ? "완료" : "삭제"}
       </Button>

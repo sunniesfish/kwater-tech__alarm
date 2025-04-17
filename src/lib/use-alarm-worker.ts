@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef } from "react";
 import { AlarmMessage, AlarmMessageType } from "../type/alarm-type";
 
 export const useAlarmWorker = () => {
-  console.log("useAlarmWorker");
   const workerRef = useRef<Worker | null>(null);
   const initializedRef = useRef<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -53,7 +52,6 @@ export const useAlarmWorker = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sendMessage = useCallback((type: AlarmMessageType, payload: any) => {
-    console.log("sendMessage", type, payload);
     if (!workerRef.current) {
       throw new Error("Worker is not initialized");
     }

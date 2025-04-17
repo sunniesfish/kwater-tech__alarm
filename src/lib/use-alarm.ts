@@ -5,7 +5,6 @@ import { useAlarmWorker } from "./use-alarm-worker";
 import { useShallow } from "zustand/react/shallow";
 
 export const useAlarm = () => {
-  console.log("useAlarm");
   const { sendMessage } = useAlarmWorker();
   const { addAlarm, removeAlarm, alarmList, refreshKey } = useAlarmStore(
     useShallow((state) => ({

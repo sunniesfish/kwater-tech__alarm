@@ -154,8 +154,8 @@ export default function AlarmMutation() {
               )}
             />
           </div>
-          {/* <div className="flex items-center gap-2 space-y-0">
-            <Label htmlFor="repeat" className="flex-grow text-card-foreground">
+          <div className="flex items-center gap-2 space-y-0">
+            <Label htmlFor="repeat" className=" text-card-foreground">
               반복
             </Label>
             <Controller
@@ -169,7 +169,7 @@ export default function AlarmMutation() {
                 />
               )}
             />
-          </div> */}
+          </div>
           <div className="space-y-2">
             <Label htmlFor="hour-select" className="text-card-foreground">
               시간
@@ -230,7 +230,7 @@ export default function AlarmMutation() {
               name="musicId"
               control={control}
               render={({ field }) => (
-                <div className="space-y-3 max-h-40 overflow-y-auto p-2 border rounded-md bg-input">
+                <div className="space-y-3 max-h-40 overflow-y-auto p-2 border rounded-md bg-input no-scrollbar">
                   <div className="flex items-center space-x-2 border-b border-input-info">
                     <Checkbox
                       id="music-default"

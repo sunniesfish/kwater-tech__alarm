@@ -12,11 +12,12 @@ import { useShallow } from "zustand/react/shallow";
 export function AlarmManager() {
   console.log("AlarmManager");
   const { registerHandler, sendMessage } = useAlarmWorker();
-  const { getAlarm, removeAlarm, alarmList } = useAlarmStore(
+  const { getAlarm, removeAlarm, alarmList, setAlarmList } = useAlarmStore(
     useShallow((state) => ({
       getAlarm: state.getAlarm,
       removeAlarm: state.removeAlarm,
       alarmList: state.alarmList,
+      setAlarmList: state.setAlarmList,
     }))
   );
   const activeAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -27,34 +28,49 @@ export function AlarmManager() {
     return async (musicId: string) => {
       let audioUrl: string;
       let audio: HTMLAudioElement;
+      let isObjectUrl = false;
 
-      if (musicId === "default") {
-        // default.mp3 파일 사용
-        audioUrl = "/default.mp3";
-        audio = new Audio(audioUrl);
-      } else {
-        // IndexedDB에서 음악 가져오기
-        const music = await getMusic(musicId);
-        if (!music) {
-          return;
+      try {
+        if (musicId === "default") {
+          audioUrl = "/default.mp3";
+        } else {
+          const music = await getMusic(musicId);
+          if (!music) {
+            console.error("음악을 찾을 수 없습니다.");
+            return;
+          }
+          audioUrl = URL.createObjectURL(music.file);
+          isObjectUrl = true;
         }
-        audioUrl = URL.createObjectURL(music.file);
+
         audio = new Audio(audioUrl);
+
         audio.onended = () => {
-          URL.revokeObjectURL(audioUrl);
-          activeAudioRef.current = null;
+          cleanupResources();
+          setIsDialogOpen(false);
         };
-      }
 
-      activeAudioRef.current = audio;
-      setIsDialogOpen(true);
+        activeAudioRef.current = audio;
+        setIsDialogOpen(true);
 
-      audio.play().catch((error) => {
-        console.error(error);
-        URL.revokeObjectURL(audioUrl);
+        await audio.play();
+
+        function cleanupResources() {
+          if (isObjectUrl) {
+            URL.revokeObjectURL(audioUrl);
+          }
+          activeAudioRef.current = null;
+        }
+
+        return audio;
+      } catch (error) {
+        console.error("알람 재생 중 오류:", error);
+        if (isObjectUrl) {
+          URL.revokeObjectURL(audioUrl!);
+        }
         activeAudioRef.current = null;
-      });
-      return audio;
+        return null;
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getMusic]);
@@ -79,15 +95,28 @@ export function AlarmManager() {
       }
       ringAlarm(alarm.musicId);
       if (alarm.repeat) {
-        alarm.lastTriggered = Date.now();
+        setAlarmList(
+          alarmList.map((alarm) => {
+            if (alarm.id === alarmId) {
+              return { ...alarm, lastTriggered: Date.now() };
+            }
+            return alarm;
+          })
+        );
         return;
-      } else {
-        removeAlarm(alarmId);
       }
+      removeAlarm(alarmId);
     };
 
     registerHandler(AlarmMessageType.TRIGGER_ALARM, handleAlarmTriggered);
-  }, [getAlarm, registerHandler, removeAlarm, ringAlarm]);
+  }, [
+    getAlarm,
+    registerHandler,
+    removeAlarm,
+    ringAlarm,
+    setAlarmList,
+    alarmList,
+  ]);
 
   useEffect(() => {
     sendMessage(AlarmMessageType.SET_ALARM, alarmList);
