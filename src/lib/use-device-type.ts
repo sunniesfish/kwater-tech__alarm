@@ -34,10 +34,13 @@ export const useDeviceType = (deviceTypeOption: DeviceTypeOption) => {
       setMatches(event.matches);
     };
     mediaQueryList.addEventListener("change", handleChange);
-    setMatches(mediaQueryList.matches);
+
+    if (mediaQueryList.matches !== matches) {
+      setMatches(mediaQueryList.matches);
+    }
     return () => {
       mediaQueryList.removeEventListener("change", handleChange);
     };
-  }, [query]);
+  }, [query, matches]);
   return matches;
 };
