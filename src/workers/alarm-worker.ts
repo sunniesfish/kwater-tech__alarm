@@ -73,6 +73,11 @@ class AlarmWorker {
       console.warn(`[AlarmWorker] Alarm check delayed by ${delay}ms`);
     }
 
+    if (delay > 1000) {
+      this.stopTick();
+      this.startTick();
+    }
+
     this.lastCheckTime = now;
   }
 
@@ -92,18 +97,27 @@ class AlarmWorker {
     if (alarmMinute !== nowMinute) {
       return false;
     }
+
+    if (alarm.repeat) {
+      if (
+        alarm.lastTriggered &&
+        alarm.lastTriggered + this.TICK_INTERVAL * 60 > Date.now()
+      ) {
+        return false;
+      }
+    }
+
     return true;
   }
 
   private checkAlarms(): void {
-    console.log("checkAlarms");
-    this.checkTimeElapsed();
-
-    this.alarmList.forEach((alarm) => {
-      if (this.shouldTriggerAlarm(alarm)) {
-        this.triggerAlarm(alarm);
-      }
-    });
+    // console.log("checkAlarms");
+    // this.checkTimeElapsed();
+    // this.alarmList.forEach((alarm) => {
+    //   if (this.shouldTriggerAlarm(alarm)) {
+    //     this.triggerAlarm(alarm);
+    //   }
+    // });
   }
 
   private triggerAlarm(alarm: Alarm): void {

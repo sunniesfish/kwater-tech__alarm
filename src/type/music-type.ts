@@ -11,6 +11,7 @@ export interface MusicMetadata {
   id: string;
   name: string;
   upload_date: Date;
+  duration: number;
 }
 
 export interface MusicDb extends DBSchema {

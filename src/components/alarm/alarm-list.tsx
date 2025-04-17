@@ -2,24 +2,24 @@ import { useCallback } from "react";
 import ListWrapper from "../common/list-wrapper";
 import AlarmRow from "./alarm-row";
 import { useAlarm } from "@/lib/use-alarm";
-import { useAlarmDockStore } from "@/store/dock-store";
 import { useAlarmStore } from "@/store/alarm-store";
+import AlarmMutationRow from "./alarm-mutation-row";
+import { DeviceType, useDeviceType } from "@/lib/use-device-type";
 export default function AlarmList() {
   console.log("AlarmList");
+  const isDesktop = useDeviceType(DeviceType.Desktop);
   const { deleteAlarm } = useAlarm();
-  const setIsDeleteMode = useAlarmDockStore((state) => state.setIsDeleteMode);
   const alarmList = useAlarmStore((state) => state.alarmList);
   const onDelete = useCallback(
     (id: string) => {
       deleteAlarm(id);
-      setIsDeleteMode(false);
     },
-    [deleteAlarm, setIsDeleteMode]
+    [deleteAlarm]
   );
   return (
     <ListWrapper>
-      <h1>알람 목록</h1>
-      <ul>
+      {isDesktop && <AlarmMutationRow />}
+      <ul className="h-full overflow-y-scroll no-scrollbar px-2">
         {alarmList.map((alarm) => (
           <li key={alarm.id}>
             <AlarmRow alarm={alarm} onDelete={() => onDelete(alarm.id)} />

@@ -1,5 +1,5 @@
 import { Label } from "@radix-ui/react-label";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { CardContent } from "../ui/card";
 import { Input } from "../ui/input";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { Button } from "../ui/button";
@@ -10,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useEffect } from "react";
 import { Day } from "@/type/alarm-type";
 import { Checkbox } from "../ui/checkbox";
 import { useMusicStore } from "@/store/music-store";
@@ -73,26 +72,16 @@ export default function AlarmMutation() {
   const { createAlarm } = useAlarm();
   const setIsAddMode = useAlarmDockStore((state) => state.setIsAddMode);
 
-  const { control, handleSubmit, setValue, watch } = useForm<AlarmFormValues>({
+  const { control, handleSubmit, reset } = useForm<AlarmFormValues>({
     defaultValues: {
       title: "",
       day: currentTime.day,
       hour: currentTime.hour,
       minute: currentTime.minute,
       repeat: false,
-      musicId: "no-music",
+      musicId: "default",
     },
   });
-
-  const watchMusicId = watch("musicId");
-
-  useEffect(() => {
-    console.log("alarm mutation useEffect");
-    if (musicList.length > 0 && watchMusicId === "no-music") {
-      setValue("musicId", musicList[0].id);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [musicList, watchMusicId]);
 
   const onSubmit = (data: AlarmFormValues) => {
     const now = new Date();
@@ -104,19 +93,21 @@ export default function AlarmMutation() {
       minute: parseInt(data.minute, 10),
       musicId: data.musicId,
       repeat: data.repeat,
+      lastTriggered: undefined,
     };
     console.log("onSubmit alarm", alarm);
     createAlarm(alarm);
     setIsAddMode(false);
+    reset();
   };
 
   return (
-    <Card className="bg-card">
-      <CardHeader>
-        <CardTitle className="text-card-foreground">알림 추가</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <>
+      <CardContent className="h-full">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="h-full space-y-4 flex flex-col justify-evenly"
+        >
           <div className="space-y-2">
             <Label htmlFor="title" className="text-card-foreground">
               제목
@@ -163,7 +154,7 @@ export default function AlarmMutation() {
               )}
             />
           </div>
-          <div className="flex items-center gap-2 space-y-0">
+          {/* <div className="flex items-center gap-2 space-y-0">
             <Label htmlFor="repeat" className="flex-grow text-card-foreground">
               반복
             </Label>
@@ -178,7 +169,7 @@ export default function AlarmMutation() {
                 />
               )}
             />
-          </div>
+          </div> */}
           <div className="space-y-2">
             <Label htmlFor="hour-select" className="text-card-foreground">
               시간
@@ -239,25 +230,49 @@ export default function AlarmMutation() {
               name="musicId"
               control={control}
               render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger
-                    id="music-select"
-                    className="bg-input text-foreground"
-                  >
-                    <SelectValue placeholder="음악" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {musicList.length > 0 ? (
-                      musicList.map((music) => (
-                        <SelectItem key={music.id} value={music.id}>
+                <div className="space-y-3 max-h-40 overflow-y-auto p-2 border rounded-md bg-input">
+                  <div className="flex items-center space-x-2 border-b border-input-info">
+                    <Checkbox
+                      id="music-default"
+                      aria-label="alarm-checkbox"
+                      className="border-input-primary data-[state=unchecked]:border-1 data-[state=unchecked]:border-input-border-primary"
+                      checked={field.value === "default"}
+                      onCheckedChange={() => field.onChange("default")}
+                    />
+                    <Label
+                      htmlFor="music-default"
+                      className="cursor-pointer flex-1 py-1 font-medium"
+                    >
+                      기본 알람음
+                    </Label>
+                  </div>
+                  {musicList.length > 0 ? (
+                    musicList.map((music) => (
+                      <div
+                        key={`music-${music.id}`}
+                        className="flex items-center space-x-2 border-b border-input-info"
+                      >
+                        <Checkbox
+                          id={`music-checkbox-${music.id}`}
+                          className="border-input-primary data-[state=unchecked]:border-1 data-[state=unchecked]:border-input-border-primary"
+                          aria-label="alarm-checkbox"
+                          checked={field.value === music.id}
+                          onCheckedChange={() => field.onChange(music.id)}
+                        />
+                        <Label
+                          htmlFor={`music-checkbox-${music.id}`}
+                          className="cursor-pointer flex-1 py-1 truncate"
+                        >
                           {music.name}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <SelectItem value="no-music">음악 없음</SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
+                        </Label>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-muted-foreground py-2 text-center">
+                      음악 없음
+                    </div>
+                  )}
+                </div>
               )}
             />
           </div>
@@ -266,6 +281,6 @@ export default function AlarmMutation() {
           </Button>
         </form>
       </CardContent>
-    </Card>
+    </>
   );
 }

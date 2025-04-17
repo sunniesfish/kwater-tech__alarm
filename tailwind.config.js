@@ -50,6 +50,45 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
+        disabled: {
+          DEFAULT: "hsl(var(--disabled))",
+          foreground: "hsl(var(--disabled-foreground))",
+        },
+        highlight: {
+          DEFAULT: "hsl(var(--highlight))",
+          foreground: "hsl(var(--highlight-foreground))",
+        },
+        surface: {
+          DEFAULT: "hsl(var(--surface))",
+          foreground: "hsl(var(--surface-foreground))",
+        },
+        input: {
+          DEFAULT: "hsl(var(--input))",
+          primary: "hsl(var(--input-primary))",
+          success: "hsl(var(--input-success))",
+          warning: "hsl(var(--input-warning))",
+          error: "hsl(var(--input-error))",
+          info: "hsl(var(--input-info))",
+        },
+        inputBorder: {
+          primary: "hsl(var(--input-border-primary))",
+          success: "hsl(var(--input-border-success))",
+          warning: "hsl(var(--input-border-warning))",
+          error: "hsl(var(--input-border-error))",
+          info: "hsl(var(--input-border-info))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

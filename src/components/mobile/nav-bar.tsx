@@ -10,7 +10,7 @@ export default function NavBar() {
           onClick={() => setView(View.Music)}
           className={`text-card-foreground hover:text-primary ${
             current === View.Music ? "text-primary" : ""
-          }`}
+          } cursor-pointer`}
         >
           알람음
         </li>
@@ -18,7 +18,7 @@ export default function NavBar() {
           onClick={() => setView(View.Alarm)}
           className={`text-card-foreground hover:text-primary ${
             current === View.Alarm ? "text-primary" : ""
-          }`}
+          } cursor-pointer`}
         >
           알람
         </li>

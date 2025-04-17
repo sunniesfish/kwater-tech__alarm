@@ -25,16 +25,26 @@ export function AlarmManager() {
   const ringAlarm = useMemo(() => {
     console.log("ringAlarm");
     return async (musicId: string) => {
-      const music = await getMusic(musicId);
-      if (!music) {
-        return;
+      let audioUrl: string;
+      let audio: HTMLAudioElement;
+
+      if (musicId === "default") {
+        // default.mp3 파일 사용
+        audioUrl = "/default.mp3";
+        audio = new Audio(audioUrl);
+      } else {
+        // IndexedDB에서 음악 가져오기
+        const music = await getMusic(musicId);
+        if (!music) {
+          return;
+        }
+        audioUrl = URL.createObjectURL(music.file);
+        audio = new Audio(audioUrl);
+        audio.onended = () => {
+          URL.revokeObjectURL(audioUrl);
+          activeAudioRef.current = null;
+        };
       }
-      const audioUrl = URL.createObjectURL(music.file);
-      const audio = new Audio(audioUrl);
-      audio.onended = () => {
-        URL.revokeObjectURL(audioUrl);
-        activeAudioRef.current = null;
-      };
 
       activeAudioRef.current = audio;
       setIsDialogOpen(true);
@@ -69,6 +79,7 @@ export function AlarmManager() {
       }
       ringAlarm(alarm.musicId);
       if (alarm.repeat) {
+        alarm.lastTriggered = Date.now();
         return;
       } else {
         removeAlarm(alarmId);

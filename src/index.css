@@ -24,6 +24,28 @@
     --input: 203 30% 90%;
     --ring: 203 85% 45%;
     --radius: 0.5rem;
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 10%;
+    --info: 224 76% 48%;
+    --info-foreground: 0 0% 100%;
+    --disabled: 203 10% 80%;
+    --disabled-foreground: 203 15% 35%;
+    --highlight: 47 100% 70%;
+    --highlight-foreground: 203 85% 25%;
+    --surface: 203 30% 97%;
+    --surface-foreground: 203 25% 30%;
+    --input-primary: 203 85% 45% / 0.15;
+    --input-success: 142 70% 45% / 0.15;
+    --input-warning: 38 92% 50% / 0.15;
+    --input-error: 0 84% 60% / 0.15;
+    --input-info: 224 76% 48% / 0.15;
+    --input-border-primary: 203 85% 45%;
+    --input-border-success: 142 70% 45%;
+    --input-border-warning: 38 92% 50%;
+    --input-border-error: 0 84% 60%;
+    --input-border-info: 224 76% 48%;
   }
 
   .dark {
@@ -46,10 +68,30 @@
     --border: 203 85% 20%;
     --input: 203 85% 20%;
     --ring: 203 85% 45%;
+    --success: 142 60% 35%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 90% 45%;
+    --warning-foreground: 0 0% 10%;
+    --info: 224 70% 40%;
+    --info-foreground: 0 0% 100%;
+    --disabled: 203 15% 30%;
+    --disabled-foreground: 203 10% 60%;
+    --highlight: 47 80% 60%;
+    --highlight-foreground: 203 85% 25%;
+    --surface: 203 25% 15%;
+    --surface-foreground: 203 15% 85%;
+    --input-primary: 203 85% 45% / 0.25;
+    --input-success: 142 60% 35% / 0.25;
+    --input-warning: 38 90% 45% / 0.25;
+    --input-error: 0 62% 30% / 0.25;
+    --input-info: 224 70% 40% / 0.25;
+    --input-border-primary: 203 85% 45%;
+    --input-border-success: 142 60% 35%;
+    --input-border-warning: 38 90% 45%;
+    --input-border-error: 0 62% 30%;
+    --input-border-info: 224 70% 40%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
@@ -80,12 +122,24 @@
     color: hsl(var(--primary) / 0.8);
   }
 }
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 
-/* 디버깅을 위한 레이아웃 테두리 스타일 */
-.debug-layout * {
-  @apply border border-black;
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
+/* 디버깅을 위한 레이아웃 테두리 스타일 */
+/* .debug-layout * {
+  @apply border border-black;
+} */
 
 #root {
-  @apply w-full h-full;
+  @apply w-screen h-screen;
+  @media screen {
+    @apply grid grid-cols-1 grid-rows-[auto_1fr_auto] min-h-0;
+  }
 }

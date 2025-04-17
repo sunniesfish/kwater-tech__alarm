@@ -3,12 +3,13 @@ export type AlarmMetadata = {
   day: Day[];
   hour: number;
   minute: number;
+  repeat: boolean;
+  lastTriggered: number | undefined;
 };
 
 export type Alarm = AlarmMetadata & {
   title: string;
   musicId: string;
-  repeat: boolean;
 };
 
 export enum Day {

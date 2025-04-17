@@ -4,7 +4,7 @@ import MobileBody from "./mobile-body";
 import NavBar from "./nav-bar";
 export default function MobileView() {
   return (
-    <main className="w-full h-full grid grid-cols-1 grid-rows-[auto_1fr_auto] bg-background">
+    <main className="w-full h-full min-h-0 grid grid-cols-1 grid-rows-[auto_1fr_auto] bg-background">
       <NavBar />
       <MobileBody />
       <MobileDoc />

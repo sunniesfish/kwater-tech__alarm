@@ -39,7 +39,8 @@ export const useMusic = () => {
     try {
       const rollback = deleteMusicFromStore(id);
       try {
-        await deleteMusic(id);
+        const result = await deleteMusic(id);
+        console.log("resutl ", result);
       } catch (error) {
         rollback();
         throw error;
