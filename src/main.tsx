@@ -1,14 +1,14 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import "./index.css";
+import React from "react";
+import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
+import "./index.css";
 import { registerSW } from "virtual:pwa-register";
 
 // PWA 서비스 워커 등록
 const updateSW = registerSW({
   onNeedRefresh() {
     if (confirm("새로운 버전이 있습니다. 업데이트하시겠습니까?")) {
-      updateSW();
+      updateSW(true);
     }
   },
   onOfflineReady() {
@@ -16,8 +16,8 @@ const updateSW = registerSW({
   },
 });
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
     <App />
-  </StrictMode>
+  </React.StrictMode>
 );
