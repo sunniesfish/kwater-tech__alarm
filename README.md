@@ -1,5 +1,7 @@
 # K Water Tech 알람 애플리케이션
 
+[서비스 링크](https://kwater-tech-alarm.netlify.app/)
+
 ## 프로젝트 소개
 
 K Water Tech 알람 애플리케이션은 알람 설정 및 알람음악 업로드 기능을 제공하는 PWA 서비스 입니다.
