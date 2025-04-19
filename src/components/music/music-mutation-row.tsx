@@ -80,7 +80,10 @@ export default function MusicMutationRow() {
   };
   return (
     <div className="flex justify-end items-center gap-2">
-      <Button variant="outline" onClick={() => setIsDeleteMode(!isDeleteMode)}>
+      <Button
+        variant={isDeleteMode ? "outline" : "delete"}
+        onClick={() => setIsDeleteMode(!isDeleteMode)}
+      >
         {isDeleteMode ? "완료" : "삭제"}
       </Button>
       <input
@@ -90,9 +93,7 @@ export default function MusicMutationRow() {
         ref={fileInputRef}
         className="hidden"
       />
-      <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
-        추가
-      </Button>
+      <Button onClick={() => fileInputRef.current?.click()}>추가</Button>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import MobileView from "./components/mobile/mobile-view";
 import { AlarmManager } from "./components/alarm/alarm-manager";
 import { DeviceType, useDeviceType } from "./lib/use-device-type";
 import Footer from "./components/desktop/footer";
+import { PwaInstallPrompt } from "./components/PwaInstallPrompt";
 
 function App() {
   const isMobile = useDeviceType(DeviceType.Mobile);
@@ -13,6 +14,7 @@ function App() {
       {isMobile ? <MobileView /> : <DesktopView />}
       {!isMobile && <Footer />}
       <AlarmManager />
+      <PwaInstallPrompt />
     </>
   );
 }
