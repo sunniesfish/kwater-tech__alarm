@@ -11,7 +11,10 @@ export default function AlarmMutationRow() {
   );
   return (
     <div className="flex justify-end items-center">
-      <Button variant="outline" onClick={() => setIsDeleteMode(!isDeleteMode)}>
+      <Button
+        variant={isDeleteMode ? "outline" : "delete"}
+        onClick={() => setIsDeleteMode(!isDeleteMode)}
+      >
         {isDeleteMode ? "완료" : "삭제"}
       </Button>
     </div>

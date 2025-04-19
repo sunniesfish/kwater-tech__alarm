@@ -88,7 +88,7 @@ export default function AlarmMutation() {
     const alarm = {
       id: `${data.day.join("")}${data.hour}${data.minute}` + now.toISOString(),
       title: data.title.length > 0 ? data.title : "알림",
-      day: data.day,
+      day: data.day?.length > 0 ? data.day : currentTime.day,
       hour: parseInt(data.hour, 10),
       minute: parseInt(data.minute, 10),
       musicId: data.musicId,
@@ -124,8 +124,8 @@ export default function AlarmMutation() {
               )}
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="day" className="text-card-foreground">
+          <div className="space-y-3">
+            <Label htmlFor="day" className="text-card-foreground font-medium">
               요일
             </Label>
             <Controller
@@ -137,14 +137,14 @@ export default function AlarmMutation() {
                   id="day"
                   value={field.value}
                   onValueChange={(value) => field.onChange(value as Day[])}
-                  className="flex flex-wrap gap-2"
+                  className="flex w-full justify-between"
                 >
                   {Object.values(Day).map((day) => (
                     <ToggleGroupItem
                       key={day}
                       value={day}
                       variant="outline"
-                      className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:font-bold border-2 text-card-foreground"
+                      className="min-w-[40px] h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-sm data-[state=on]:border-primary border border-input hover:bg-accent hover:text-accent-foreground text-card-foreground transition-colors m-0.5"
                     >
                       {day}
                     </ToggleGroupItem>
