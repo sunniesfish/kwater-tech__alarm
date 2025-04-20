@@ -152,7 +152,7 @@
 } */
 
 #root {
-  @apply w-screen h-screen;
+  @apply w-screen h-dvh;
   @media screen {
     @apply grid grid-cols-1 grid-rows-[auto_1fr_auto] min-h-0;
   }
