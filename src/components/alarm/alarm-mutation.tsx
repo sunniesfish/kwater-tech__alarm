@@ -102,12 +102,12 @@ export default function AlarmMutation() {
 
   return (
     <>
-      <CardContent className="h-full">
+      <CardContent className="h-full overflow-x-hidden">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="h-full space-y-4 flex flex-col justify-evenly"
+          className="h-full w-full space-y-4 flex flex-col justify-evenly"
         >
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Label htmlFor="title" className="text-card-foreground">
               제목
             </Label>
@@ -118,13 +118,13 @@ export default function AlarmMutation() {
                 <Input
                   type="text"
                   id="title"
-                  className="bg-input text-foreground"
+                  className="bg-input text-foreground w-full min-w-0"
                   {...field}
                 />
               )}
             />
           </div>
-          <div className="space-y-3">
+          <div className="space-y-3 w-full">
             <Label htmlFor="day" className="text-card-foreground font-medium">
               요일
             </Label>
@@ -137,7 +137,7 @@ export default function AlarmMutation() {
                   id="day"
                   value={field.value}
                   onValueChange={(value) => field.onChange(value as Day[])}
-                  className="flex w-full justify-between"
+                  className="flex w-full justify-between overflow-x-auto"
                 >
                   {Object.values(Day).map((day) => (
                     <ToggleGroupItem
@@ -153,8 +153,8 @@ export default function AlarmMutation() {
               )}
             />
           </div>
-          <div className="flex items-center gap-2 space-y-0">
-            <Label htmlFor="repeat" className=" text-card-foreground">
+          <div className="flex items-center gap-2 space-y-0 w-full">
+            <Label htmlFor="repeat" className="text-card-foreground">
               반복
             </Label>
             <Controller
@@ -169,7 +169,7 @@ export default function AlarmMutation() {
               )}
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Label htmlFor="hour-select" className="text-card-foreground">
               시간
             </Label>
@@ -180,7 +180,7 @@ export default function AlarmMutation() {
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger
                     id="hour-select"
-                    className="bg-input text-foreground"
+                    className="bg-input text-foreground w-full"
                   >
                     <SelectValue placeholder="시간" />
                   </SelectTrigger>
@@ -195,7 +195,7 @@ export default function AlarmMutation() {
               )}
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Label htmlFor="minute-select" className="text-card-foreground">
               분
             </Label>
@@ -206,7 +206,7 @@ export default function AlarmMutation() {
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger
                     id="minute-select"
-                    className="bg-input text-foreground"
+                    className="bg-input text-foreground w-full"
                   >
                     <SelectValue placeholder="분" />
                   </SelectTrigger>
@@ -221,7 +221,7 @@ export default function AlarmMutation() {
               )}
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Label htmlFor="music-select" className="text-card-foreground">
               음악
             </Label>
@@ -229,7 +229,7 @@ export default function AlarmMutation() {
               name="musicId"
               control={control}
               render={({ field }) => (
-                <div className="space-y-3 max-h-40 overflow-y-auto p-2 border rounded-md bg-input no-scrollbar">
+                <div className="space-y-3 max-h-40 overflow-y-auto p-2 border rounded-md bg-input no-scrollbar w-full">
                   <div className="flex items-center space-x-2 border-b border-input-info">
                     <Checkbox
                       id="music-default"

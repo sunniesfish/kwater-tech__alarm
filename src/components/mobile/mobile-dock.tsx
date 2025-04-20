@@ -136,7 +136,7 @@ export default function MobileDock() {
         <li className="dock-button-container">
           <input
             type="file"
-            accept=".mp3,audio/mpeg,.wav,audio/wav,.ogg,audio/ogg,.aac,audio/aac,.m4a,audio/mp4,audio/x-m4a"
+            accept=".mp3,.wav,.ogg,.aac,.m4a"
             onChange={handleUploadMusic}
             ref={fileInputRef}
             className="hidden"

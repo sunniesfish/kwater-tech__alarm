@@ -88,7 +88,7 @@ export default function MusicMutationRow() {
       </Button>
       <input
         type="file"
-        accept="audio/*"
+        accept=".mp3,.wav,.ogg,.aac,.m4a"
         onChange={handleUploadMusic}
         ref={fileInputRef}
         className="hidden"
