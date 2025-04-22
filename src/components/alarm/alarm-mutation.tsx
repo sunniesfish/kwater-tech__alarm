@@ -94,6 +94,7 @@ export default function AlarmMutation() {
       musicId: data.musicId,
       repeat: data.repeat,
       lastTriggered: undefined,
+      isActive: true
     };
     createAlarm(alarm);
     setIsAddMode(false);

@@ -80,20 +80,19 @@ class AlarmWorker {
 
   private shouldTriggerAlarm(alarm: Alarm): boolean {
     const now = new Date();
-    if (!alarm.day.includes(this.DAY[now.getDay()])) {
-      return false;
-    }
+    if(!alarm.isActive) return false;
+    
+    if (!alarm.day.includes(this.DAY[now.getDay()])) return false;
+  
 
     const [alarmHour, alarmMinute] = [alarm.hour, alarm.minute];
     const [nowHour, nowMinute] = [now.getHours(), now.getMinutes()];
 
-    if (alarmHour !== nowHour) {
-      return false;
-    }
+    if (alarmHour !== nowHour) return false;
+ 
 
-    if (alarmMinute !== nowMinute) {
-      return false;
-    }
+    if (alarmMinute !== nowMinute) return false;
+ 
 
     if (alarm.repeat) {
       if (

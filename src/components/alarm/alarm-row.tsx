@@ -1,6 +1,8 @@
 import { Alarm } from "@/type/alarm-type";
 import { CardRow } from "../ui/card";
 import { useAlarmDockStore } from "@/store/dock-store";
+import { Toggle } from "../ui/toggle";
+import { Check } from "lucide-react";
 export default function AlarmRow({
   alarm,
   onDelete,
@@ -22,6 +24,12 @@ export default function AlarmRow({
 
       <div className="flex-1 truncate">
         <span className="font-medium">{alarm.title}</span>
+      </div>
+
+      <div>
+        <Toggle >
+          <Check />
+        </Toggle>
       </div>
 
       {isDeleteMode ? (
