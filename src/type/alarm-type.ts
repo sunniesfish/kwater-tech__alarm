@@ -38,7 +38,7 @@ export enum AlarmMessageType {
 export type SetAlarm = {
   type: AlarmMessageType.SET_ALARM;
   payload: {
-    alarmList: Alarm[];
+    alarmRecord: Record<string, Alarm>;
   };
 };
 

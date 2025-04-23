@@ -3,14 +3,11 @@ import { CardRow } from "../ui/card";
 import { useAlarmDockStore } from "@/store/dock-store";
 import { Toggle } from "../ui/toggle";
 import { Check } from "lucide-react";
-export default function AlarmRow({
-  alarm,
-  onDelete,
-}: {
-  alarm: Alarm;
-  onDelete: () => void;
-}) {
+import { memo } from "react";
+import { useAlarm } from "@/lib/use-alarm";
+export default memo(function AlarmRow({ alarm }: { alarm: Alarm }) {
   const isDeleteMode = useAlarmDockStore((state) => state.isDeleteMode);
+  const { deleteAlarm, updateAlarm } = useAlarm();
   return (
     <CardRow className="text-card-foreground justify-between grid grid-cols-[auto_1fr_auto]">
       <div className="flex items-center">
@@ -27,7 +24,12 @@ export default function AlarmRow({
       </div>
 
       <div>
-        <Toggle >
+        <Toggle
+          pressed={alarm.isActive}
+          onPressedChange={(pressed) =>
+            updateAlarm(alarm.id, { ...alarm, isActive: pressed })
+          }
+        >
           <Check />
         </Toggle>
       </div>
@@ -35,7 +37,7 @@ export default function AlarmRow({
       {isDeleteMode ? (
         <button
           className="text-destructive hover:text-destructive/80  px-3 py-1 rounded-md hover:bg-destructive/10"
-          onClick={onDelete}
+          onClick={() => deleteAlarm(alarm.id)}
           aria-label="알람 삭제"
         >
           삭제
@@ -43,4 +45,4 @@ export default function AlarmRow({
       ) : null}
     </CardRow>
   );
-}
+});
