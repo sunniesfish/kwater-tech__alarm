@@ -79,8 +79,12 @@ class AlarmWorker {
   }
 
   private shouldTriggerAlarm(alarm: Alarm): boolean {
+    console.log("shouldTriggerAlarm", alarm);
     const now = new Date();
-    if (!alarm.isActive) return false;
+    if (!alarm.isActive) {
+      console.log("alarm is not active");
+      return false;
+    }
 
     if (!alarm.day.includes(this.DAY[now.getDay()])) return false;
 

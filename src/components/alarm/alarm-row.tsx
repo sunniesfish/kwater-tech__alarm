@@ -9,7 +9,7 @@ export default memo(function AlarmRow({ alarm }: { alarm: Alarm }) {
   const isDeleteMode = useAlarmDockStore((state) => state.isDeleteMode);
   const { deleteAlarm, updateAlarm } = useAlarm();
   return (
-    <CardRow className="text-card-foreground justify-between grid grid-cols-[auto_1fr_auto]">
+    <CardRow className="text-card-foreground justify-between grid grid-cols-[auto_1fr_auto_auto]">
       <div className="flex items-center">
         <span className="text-lg font-semibold mr-2">
           {alarm.hour}:{alarm.minute.toString().padStart(2, "0")}
