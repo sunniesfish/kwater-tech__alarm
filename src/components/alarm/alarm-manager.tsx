@@ -25,7 +25,7 @@ export function AlarmManager() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const ringAlarm = useMemo(() => {
-    return async (musicId: string) => {
+    return async (musicId: string, repeat: number) => {
       let audioUrl: string;
       let audio: HTMLAudioElement;
       let isObjectUrl = false;
@@ -43,16 +43,22 @@ export function AlarmManager() {
           isObjectUrl = true;
         }
 
+        let playCount = 0;
         audio = new Audio(audioUrl);
-
-        audio.onended = () => {
-          cleanupResources();
-          setIsDialogOpen(false);
+        const playNext = () => {
+          playCount++;
+          if (playCount < repeat) {
+            audio.currentTime = 0;
+            audio.play();
+          } else {
+            cleanupResources();
+            setIsDialogOpen(false);
+          }
         };
 
+        audio.onended = playNext;
         activeAudioRef.current = audio;
         setIsDialogOpen(true);
-
         await audio.play();
 
         function cleanupResources() {
@@ -88,14 +94,13 @@ export function AlarmManager() {
 
   useEffect(() => {
     const handleAlarmTriggered = (payload: TriggerAlarm["payload"]) => {
-      console.log("handleAlarmTriggered====================");
       const { alarmId } = payload;
       const alarm: Alarm | undefined = getAlarm(alarmId);
       if (!alarm) {
         return;
       }
       updateAlarm(alarmId, { ...alarm, lastTriggered: Date.now() });
-      ringAlarm(alarm.musicId);
+      ringAlarm(alarm.musicId, alarm.repeat);
     };
 
     registerHandler(AlarmMessageType.TRIGGER_ALARM, handleAlarmTriggered);
@@ -110,7 +115,6 @@ export function AlarmManager() {
   ]);
 
   useEffect(() => {
-    console.log("updateAlarm", alarmRecord);
     sendMessage(AlarmMessageType.SET_ALARM, alarmRecord);
   }, [alarmRecord, sendMessage]);
 

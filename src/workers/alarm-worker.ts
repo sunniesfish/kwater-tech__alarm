@@ -79,7 +79,6 @@ class AlarmWorker {
   }
 
   private shouldTriggerAlarm(alarm: Alarm): boolean {
-    console.log("shouldTriggerAlarm", alarm);
     const now = new Date();
     if (!alarm.isActive) {
       return false;

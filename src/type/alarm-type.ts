@@ -5,6 +5,7 @@ export type AlarmMetadata = {
   minute: number;
   lastTriggered: number | undefined;
   isActive: boolean;
+  repeat: number;
 };
 
 export type Alarm = AlarmMetadata & {

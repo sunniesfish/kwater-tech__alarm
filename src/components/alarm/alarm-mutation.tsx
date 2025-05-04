@@ -16,12 +16,14 @@ import { useMusicStore } from "@/store/music-store";
 import { useAlarm } from "@/lib/use-alarm";
 import { useForm, Controller } from "react-hook-form";
 import { useAlarmDockStore } from "@/store/dock-store";
+import { useShallow } from "zustand/react/shallow";
 interface AlarmFormValues {
   title: string;
   day: Day[];
   hour: string;
   minute: string;
   musicId: string;
+  repeat: number;
 }
 
 export default function AlarmMutation() {
@@ -67,9 +69,11 @@ export default function AlarmMutation() {
   };
 
   const currentTime = getCurrentTimeAndDay();
-  const musicList = useMusicStore((state) => state.musicList);
+  const musicList = useMusicStore(useShallow((state) => state.musicList));
   const { createAlarm } = useAlarm();
-  const setIsAddMode = useAlarmDockStore((state) => state.setIsAddMode);
+  const setIsAddMode = useAlarmDockStore(
+    useShallow((state) => state.setIsAddMode)
+  );
 
   const { control, handleSubmit, reset } = useForm<AlarmFormValues>({
     defaultValues: {
@@ -78,6 +82,7 @@ export default function AlarmMutation() {
       hour: currentTime.hour,
       minute: currentTime.minute,
       musicId: "default",
+      repeat: 1,
     },
   });
 
@@ -85,13 +90,14 @@ export default function AlarmMutation() {
     const now = new Date();
     const alarm = {
       id: `${data.day.join("")}${data.hour}${data.minute}` + now.toISOString(),
-      title: data.title.length > 0 ? data.title : "알림",
+      title: data.title.length > 0 ? data.title : "알람",
       day: data.day?.length > 0 ? data.day : currentTime.day,
       hour: parseInt(data.hour, 10),
       minute: parseInt(data.minute, 10),
       musicId: data.musicId,
       lastTriggered: undefined,
       isActive: true,
+      repeat: data.repeat,
     };
     createAlarm(alarm);
     setIsAddMode(false);
@@ -151,7 +157,7 @@ export default function AlarmMutation() {
               )}
             />
           </div>
-          {/* <div className="flex items-center gap-2 space-y-0 w-full">
+          <div className="space-y-2 w-full">
             <Label htmlFor="repeat" className="text-card-foreground">
               반복
             </Label>
@@ -159,14 +165,16 @@ export default function AlarmMutation() {
               name="repeat"
               control={control}
               render={({ field }) => (
-                <Checkbox
+                <Input
+                  type="number"
                   id="repeat"
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
+                  min={1}
+                  className="bg-input text-foreground"
+                  {...field}
                 />
               )}
             />
-          </div> */}
+          </div>
           <div className="space-y-2 w-full">
             <Label htmlFor="hour-select" className="text-card-foreground">
               시간
