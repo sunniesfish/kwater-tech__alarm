@@ -82,7 +82,6 @@ class AlarmWorker {
     console.log("shouldTriggerAlarm", alarm);
     const now = new Date();
     if (!alarm.isActive) {
-      console.log("alarm is not active");
       return false;
     }
 
@@ -95,13 +94,11 @@ class AlarmWorker {
 
     if (alarmMinute !== nowMinute) return false;
 
-    if (alarm.repeat) {
-      if (
-        alarm.lastTriggered &&
-        alarm.lastTriggered + this.TICK_INTERVAL * 60 > Date.now()
-      ) {
-        return false;
-      }
+    if (
+      alarm.lastTriggered &&
+      alarm.lastTriggered + this.TICK_INTERVAL * 60 > Date.now()
+    ) {
+      return false;
     }
 
     return true;

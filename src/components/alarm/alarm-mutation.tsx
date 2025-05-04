@@ -21,7 +21,6 @@ interface AlarmFormValues {
   day: Day[];
   hour: string;
   minute: string;
-  repeat: boolean;
   musicId: string;
 }
 
@@ -78,7 +77,6 @@ export default function AlarmMutation() {
       day: currentTime.day,
       hour: currentTime.hour,
       minute: currentTime.minute,
-      repeat: false,
       musicId: "default",
     },
   });
@@ -92,9 +90,8 @@ export default function AlarmMutation() {
       hour: parseInt(data.hour, 10),
       minute: parseInt(data.minute, 10),
       musicId: data.musicId,
-      repeat: data.repeat,
       lastTriggered: undefined,
-      isActive: true
+      isActive: true,
     };
     createAlarm(alarm);
     setIsAddMode(false);
@@ -154,7 +151,7 @@ export default function AlarmMutation() {
               )}
             />
           </div>
-          <div className="flex items-center gap-2 space-y-0 w-full">
+          {/* <div className="flex items-center gap-2 space-y-0 w-full">
             <Label htmlFor="repeat" className="text-card-foreground">
               반복
             </Label>
@@ -169,7 +166,7 @@ export default function AlarmMutation() {
                 />
               )}
             />
-          </div>
+          </div> */}
           <div className="space-y-2 w-full">
             <Label htmlFor="hour-select" className="text-card-foreground">
               시간

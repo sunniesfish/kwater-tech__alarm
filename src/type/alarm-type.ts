@@ -3,7 +3,6 @@ export type AlarmMetadata = {
   day: Day[];
   hour: number;
   minute: number;
-  repeat: boolean;
   lastTriggered: number | undefined;
   isActive: boolean;
 };
