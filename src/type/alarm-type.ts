@@ -3,8 +3,9 @@ export type AlarmMetadata = {
   day: Day[];
   hour: number;
   minute: number;
-  repeat: boolean;
   lastTriggered: number | undefined;
+  isActive: boolean;
+  repeat: number;
 };
 
 export type Alarm = AlarmMetadata & {
@@ -37,7 +38,7 @@ export enum AlarmMessageType {
 export type SetAlarm = {
   type: AlarmMessageType.SET_ALARM;
   payload: {
-    alarmList: Alarm[];
+    alarmRecord: Record<string, Alarm>;
   };
 };
 

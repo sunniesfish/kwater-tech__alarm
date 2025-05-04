@@ -11,19 +11,21 @@ import { useShallow } from "zustand/react/shallow";
 
 export function AlarmManager() {
   const { registerHandler, sendMessage } = useAlarmWorker();
-  const { getAlarm, removeAlarm, alarmList, setAlarmList } = useAlarmStore(
-    useShallow((state) => ({
-      getAlarm: state.getAlarm,
-      removeAlarm: state.removeAlarm,
-      alarmList: state.alarmList,
-      setAlarmList: state.setAlarmList,
-    }))
-  );
+  const { getAlarm, removeAlarm, alarmRecord, setAlarmRecord, updateAlarm } =
+    useAlarmStore(
+      useShallow((state) => ({
+        getAlarm: state.getAlarm,
+        removeAlarm: state.removeAlarm,
+        alarmRecord: state.alarmRecord,
+        setAlarmRecord: state.setAlarmRecord,
+        updateAlarm: state.updateAlarm,
+      }))
+    );
   const activeAudioRef = useRef<HTMLAudioElement | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const ringAlarm = useMemo(() => {
-    return async (musicId: string) => {
+    return async (musicId: string, repeat: number) => {
       let audioUrl: string;
       let audio: HTMLAudioElement;
       let isObjectUrl = false;
@@ -41,16 +43,22 @@ export function AlarmManager() {
           isObjectUrl = true;
         }
 
+        let playCount = 0;
         audio = new Audio(audioUrl);
-
-        audio.onended = () => {
-          cleanupResources();
-          setIsDialogOpen(false);
+        const playNext = () => {
+          playCount++;
+          if (playCount < repeat) {
+            audio.currentTime = 0;
+            audio.play();
+          } else {
+            cleanupResources();
+            setIsDialogOpen(false);
+          }
         };
 
+        audio.onended = playNext;
         activeAudioRef.current = audio;
         setIsDialogOpen(true);
-
         await audio.play();
 
         function cleanupResources() {
@@ -91,19 +99,8 @@ export function AlarmManager() {
       if (!alarm) {
         return;
       }
-      ringAlarm(alarm.musicId);
-      if (alarm.repeat) {
-        setAlarmList(
-          alarmList.map((alarm) => {
-            if (alarm.id === alarmId) {
-              return { ...alarm, lastTriggered: Date.now() };
-            }
-            return alarm;
-          })
-        );
-        return;
-      }
-      removeAlarm(alarmId);
+      updateAlarm(alarmId, { ...alarm, lastTriggered: Date.now() });
+      ringAlarm(alarm.musicId, alarm.repeat);
     };
 
     registerHandler(AlarmMessageType.TRIGGER_ALARM, handleAlarmTriggered);
@@ -112,13 +109,14 @@ export function AlarmManager() {
     registerHandler,
     removeAlarm,
     ringAlarm,
-    setAlarmList,
-    alarmList,
+    setAlarmRecord,
+    alarmRecord,
+    updateAlarm,
   ]);
 
   useEffect(() => {
-    sendMessage(AlarmMessageType.SET_ALARM, alarmList);
-  }, [alarmList, sendMessage]);
+    sendMessage(AlarmMessageType.SET_ALARM, alarmRecord);
+  }, [alarmRecord, sendMessage]);
 
   useEffect(() => {
     return () => {

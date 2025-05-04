@@ -8,7 +8,7 @@ import {
 } from "../type/alarm-type";
 
 class AlarmWorker {
-  private alarmList: Alarm[] = [];
+  private alarmRecord: Record<string, Alarm> = {};
   private readonly TICK_INTERVAL = 1000;
   private tickInterval: number | undefined;
   private lastCheckTime: number = Date.now();
@@ -29,17 +29,17 @@ class AlarmWorker {
     const { type, payload } = event.data;
     switch (type) {
       case AlarmMessageType.SET_ALARM:
-        this.setAlarmList({ alarmList: payload });
+        this.setAlarmRecord({ alarmRecord: payload.alarmRecord });
         break;
     }
   }
 
-  private setAlarmList({ alarmList }: SetAlarm["payload"]) {
-    if (alarmList?.length > 0) {
-      this.alarmList = [...alarmList];
+  private setAlarmRecord({ alarmRecord }: SetAlarm["payload"]) {
+    if (alarmRecord && Object.keys(alarmRecord).length > 0) {
+      this.alarmRecord = { ...alarmRecord };
       this.startTick();
     } else {
-      this.alarmList = [];
+      this.alarmRecord = {};
       this.stopTick();
     }
   }
@@ -80,28 +80,24 @@ class AlarmWorker {
 
   private shouldTriggerAlarm(alarm: Alarm): boolean {
     const now = new Date();
-    if (!alarm.day.includes(this.DAY[now.getDay()])) {
+    if (!alarm.isActive) {
       return false;
     }
+
+    if (!alarm.day.includes(this.DAY[now.getDay()])) return false;
 
     const [alarmHour, alarmMinute] = [alarm.hour, alarm.minute];
     const [nowHour, nowMinute] = [now.getHours(), now.getMinutes()];
 
-    if (alarmHour !== nowHour) {
-      return false;
-    }
+    if (alarmHour !== nowHour) return false;
 
-    if (alarmMinute !== nowMinute) {
-      return false;
-    }
+    if (alarmMinute !== nowMinute) return false;
 
-    if (alarm.repeat) {
-      if (
-        alarm.lastTriggered &&
-        alarm.lastTriggered + this.TICK_INTERVAL * 60 > Date.now()
-      ) {
-        return false;
-      }
+    if (
+      alarm.lastTriggered &&
+      alarm.lastTriggered + this.TICK_INTERVAL * 60 > Date.now()
+    ) {
+      return false;
     }
 
     return true;
@@ -109,7 +105,7 @@ class AlarmWorker {
 
   private checkAlarms(): void {
     this.checkTimeElapsed();
-    this.alarmList.forEach((alarm) => {
+    Object.values(this.alarmRecord).forEach((alarm) => {
       if (this.shouldTriggerAlarm(alarm)) {
         this.triggerAlarm(alarm);
       }

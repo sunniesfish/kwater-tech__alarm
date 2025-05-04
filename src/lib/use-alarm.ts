@@ -6,17 +6,24 @@ import { useShallow } from "zustand/react/shallow";
 
 export const useAlarm = () => {
   const { sendMessage } = useAlarmWorker();
-  const { addAlarm, removeAlarm, alarmList, refreshKey } = useAlarmStore(
+  const {
+    addAlarm,
+    removeAlarm,
+    alarmRecord,
+    updateAlarm: updateAlarmStore,
+    refreshKey,
+  } = useAlarmStore(
     useShallow((state) => ({
       addAlarm: state.addAlarm,
       removeAlarm: state.removeAlarm,
-      alarmList: state.alarmList,
+      alarmRecord: state.alarmRecord,
+      updateAlarm: state.updateAlarm,
       refreshKey: state.refreshKey,
     }))
   );
 
   useEffect(() => {
-    sendMessage(AlarmMessageType.SET_ALARM, { alarmList });
+    sendMessage(AlarmMessageType.SET_ALARM, { alarmRecord });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshKey]);
 
@@ -26,6 +33,12 @@ export const useAlarm = () => {
     },
     [addAlarm]
   );
+  const updateAlarm = useCallback(
+    (id: string, alarm: Alarm) => {
+      updateAlarmStore(id, alarm);
+    },
+    [updateAlarmStore]
+  );
 
   const deleteAlarm = useCallback(
     (id: string) => {
@@ -34,5 +47,5 @@ export const useAlarm = () => {
     [removeAlarm]
   );
 
-  return { alarmList, createAlarm, deleteAlarm };
+  return { alarmRecord, createAlarm, deleteAlarm, updateAlarm };
 };
