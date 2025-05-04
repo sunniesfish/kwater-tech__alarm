@@ -3,33 +3,47 @@ import { persist } from "zustand/middleware";
 import { Alarm } from "../type/alarm-type";
 
 export type AlarmStore = {
-  alarmList: Alarm[];
+  alarmRecord: Record<string, Alarm>;
   refreshKey: object;
   addAlarm: (alarm: Alarm) => void;
-  setAlarmList: (alarmList: Alarm[]) => void;
+  setAlarmRecord: (alarmRecord: Record<string, Alarm>) => void;
   getAlarm: (alarmId: string) => Alarm | undefined;
   removeAlarm: (alarmId: string) => void;
+  updateAlarm: (alarmId: string, alarm: Alarm) => void;
 };
 
 export const useAlarmStore = create<AlarmStore>()(
   persist(
     (set, get) => ({
-      alarmList: [],
+      alarmRecord: {},
       refreshKey: {},
       addAlarm: (alarm: Alarm) => {
         set((state) => ({
-          alarmList: [...state.alarmList, alarm],
+          alarmRecord: { ...state.alarmRecord, [alarm.id]: alarm },
           refreshKey: {},
         }));
       },
-      setAlarmList: (alarmList: Alarm[]) => set({ alarmList }),
+      setAlarmRecord: (alarmRecord: Record<string, Alarm>) =>
+        set({
+          alarmRecord: { ...get().alarmRecord, ...alarmRecord },
+          refreshKey: {},
+        }),
       getAlarm: (alarmId: string) => {
-        const alarm = get().alarmList.find((alarm) => alarm.id === alarmId);
+        const alarm = get().alarmRecord[alarmId];
         return alarm;
       },
       removeAlarm: (alarmId: string) =>
+        set((state) => {
+          const newRecord = { ...state.alarmRecord };
+          delete newRecord[alarmId];
+          return {
+            alarmRecord: newRecord,
+            refreshKey: {},
+          };
+        }),
+      updateAlarm: (alarmId: string, alarm: Alarm) =>
         set((state) => ({
-          alarmList: state.alarmList.filter((alarm) => alarm.id !== alarmId),
+          alarmRecord: { ...state.alarmRecord, [alarmId]: alarm },
           refreshKey: {},
         })),
     }),
