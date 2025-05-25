@@ -12,7 +12,7 @@ export default function AlarmMutationModal() {
   );
   return (
     <ModalWrapper isOpen={isAddMode} setIsOpen={setIsAddMode}>
-      <AlarmMutation />
+      <AlarmMutation className="mt-3 mb-6" />
     </ModalWrapper>
   );
 }

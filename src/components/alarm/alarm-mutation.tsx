@@ -17,6 +17,7 @@ import { useAlarm } from "@/lib/use-alarm";
 import { useForm, Controller } from "react-hook-form";
 import { useAlarmDockStore } from "@/store/dock-store";
 import { useShallow } from "zustand/react/shallow";
+import { cn } from "@/lib/utils";
 interface AlarmFormValues {
   title: string;
   day: Day[];
@@ -26,7 +27,7 @@ interface AlarmFormValues {
   repeat: number;
 }
 
-export default function AlarmMutation() {
+export default function AlarmMutation({ className }: { className?: string }) {
   const getCurrentTimeAndDay = () => {
     const now = new Date();
     const currentHour = now.getHours();
@@ -106,7 +107,7 @@ export default function AlarmMutation() {
 
   return (
     <>
-      <CardContent className="h-full overflow-y-auto">
+      <CardContent className={cn("h-full overflow-y-auto", className)}>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="h-full w-full space-y-4 flex flex-col justify-evenly"

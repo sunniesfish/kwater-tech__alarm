@@ -12,7 +12,7 @@ export default function ModalWrapper({
 }) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="h-full">
+      <DialogContent className="h-[90vh]">
         <DialogTitle className="hidden"></DialogTitle>
         <DialogDescription className="hidden"></DialogDescription>
         {children}
