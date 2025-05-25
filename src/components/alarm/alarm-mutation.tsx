@@ -16,13 +16,14 @@ import { useMusicStore } from "@/store/music-store";
 import { useAlarm } from "@/lib/use-alarm";
 import { useForm, Controller } from "react-hook-form";
 import { useAlarmDockStore } from "@/store/dock-store";
+import { useShallow } from "zustand/react/shallow";
 interface AlarmFormValues {
   title: string;
   day: Day[];
   hour: string;
   minute: string;
-  repeat: boolean;
   musicId: string;
+  repeat: number;
 }
 
 export default function AlarmMutation() {
@@ -68,9 +69,11 @@ export default function AlarmMutation() {
   };
 
   const currentTime = getCurrentTimeAndDay();
-  const musicList = useMusicStore((state) => state.musicList);
+  const musicList = useMusicStore(useShallow((state) => state.musicList));
   const { createAlarm } = useAlarm();
-  const setIsAddMode = useAlarmDockStore((state) => state.setIsAddMode);
+  const setIsAddMode = useAlarmDockStore(
+    useShallow((state) => state.setIsAddMode)
+  );
 
   const { control, handleSubmit, reset } = useForm<AlarmFormValues>({
     defaultValues: {
@@ -78,8 +81,8 @@ export default function AlarmMutation() {
       day: currentTime.day,
       hour: currentTime.hour,
       minute: currentTime.minute,
-      repeat: false,
       musicId: "default",
+      repeat: 1,
     },
   });
 
@@ -87,13 +90,14 @@ export default function AlarmMutation() {
     const now = new Date();
     const alarm = {
       id: `${data.day.join("")}${data.hour}${data.minute}` + now.toISOString(),
-      title: data.title.length > 0 ? data.title : "알림",
-      day: data.day,
+      title: data.title.length > 0 ? data.title : "알람",
+      day: data.day?.length > 0 ? data.day : currentTime.day,
       hour: parseInt(data.hour, 10),
       minute: parseInt(data.minute, 10),
       musicId: data.musicId,
-      repeat: data.repeat,
       lastTriggered: undefined,
+      isActive: true,
+      repeat: data.repeat,
     };
     createAlarm(alarm);
     setIsAddMode(false);
@@ -105,9 +109,9 @@ export default function AlarmMutation() {
       <CardContent className="h-full overflow-y-auto">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="h-full space-y-4 flex flex-col justify-evenly"
+          className="h-full w-full space-y-4 flex flex-col justify-evenly"
         >
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Label htmlFor="title" className="text-card-foreground">
               제목
             </Label>
@@ -118,14 +122,14 @@ export default function AlarmMutation() {
                 <Input
                   type="text"
                   id="title"
-                  className="bg-input text-foreground"
+                  className="bg-input text-foreground w-full min-w-0"
                   {...field}
                 />
               )}
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="day" className="text-card-foreground">
+          <div className="space-y-3 w-full">
+            <Label htmlFor="day" className="text-card-foreground font-medium">
               요일
             </Label>
             <Controller
@@ -137,14 +141,14 @@ export default function AlarmMutation() {
                   id="day"
                   value={field.value}
                   onValueChange={(value) => field.onChange(value as Day[])}
-                  className="flex flex-wrap gap-2"
+                  className="flex w-full justify-between overflow-x-auto"
                 >
                   {Object.values(Day).map((day) => (
                     <ToggleGroupItem
                       key={day}
                       value={day}
                       variant="outline"
-                      className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:font-bold border-2 text-card-foreground"
+                      className="min-w-[40px] h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-sm data-[state=on]:border-primary border border-input hover:bg-accent hover:text-accent-foreground text-card-foreground transition-colors m-0.5"
                     >
                       {day}
                     </ToggleGroupItem>
@@ -153,23 +157,25 @@ export default function AlarmMutation() {
               )}
             />
           </div>
-          <div className="flex items-center gap-2 space-y-0">
-            <Label htmlFor="repeat" className=" text-card-foreground">
+          <div className="space-y-2 w-full">
+            <Label htmlFor="repeat" className="text-card-foreground">
               반복
             </Label>
             <Controller
               name="repeat"
               control={control}
               render={({ field }) => (
-                <Checkbox
+                <Input
+                  type="number"
                   id="repeat"
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
+                  min={1}
+                  className="bg-input text-foreground"
+                  {...field}
                 />
               )}
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Label htmlFor="hour-select" className="text-card-foreground">
               시간
             </Label>
@@ -180,7 +186,7 @@ export default function AlarmMutation() {
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger
                     id="hour-select"
-                    className="bg-input text-foreground"
+                    className="bg-input text-foreground w-full"
                   >
                     <SelectValue placeholder="시간" />
                   </SelectTrigger>
@@ -195,7 +201,7 @@ export default function AlarmMutation() {
               )}
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Label htmlFor="minute-select" className="text-card-foreground">
               분
             </Label>
@@ -206,7 +212,7 @@ export default function AlarmMutation() {
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger
                     id="minute-select"
-                    className="bg-input text-foreground"
+                    className="bg-input text-foreground w-full"
                   >
                     <SelectValue placeholder="분" />
                   </SelectTrigger>
@@ -221,7 +227,7 @@ export default function AlarmMutation() {
               )}
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Label htmlFor="music-select" className="text-card-foreground">
               음악
             </Label>
@@ -229,7 +235,7 @@ export default function AlarmMutation() {
               name="musicId"
               control={control}
               render={({ field }) => (
-                <div className="space-y-3 max-h-40 overflow-y-auto p-2 border rounded-md bg-input no-scrollbar">
+                <div className="space-y-3 max-h-40 overflow-y-auto p-2 border rounded-md bg-input no-scrollbar w-full">
                   <div className="flex items-center space-x-2 border-b border-input-info">
                     <Checkbox
                       id="music-default"

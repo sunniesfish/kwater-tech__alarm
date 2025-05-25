@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useRef } from "react";
 import { AlarmMessage, AlarmMessageType } from "../type/alarm-type";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handlerMap = new Map<AlarmMessageType, (payload: any) => void>();
+
 export const useAlarmWorker = () => {
   const workerRef = useRef<Worker | null>(null);
   const initializedRef = useRef<boolean>(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handlerRef = useRef<Map<AlarmMessageType, (payload: any) => void>>(
-    new Map()
-  );
 
   useEffect(() => {
     if (!initializedRef.current) {
@@ -18,8 +17,8 @@ export const useAlarmWorker = () => {
         );
         workerRef.current.onmessage = (event: MessageEvent<AlarmMessage>) => {
           const message = event.data;
-          if (message.type && handlerRef.current.has(message.type)) {
-            const handler = handlerRef.current.get(message.type);
+          if (message.type && handlerMap.has(message.type)) {
+            const handler = handlerMap.get(message.type);
             if (handler) handler(message.payload);
           }
         };
@@ -32,8 +31,6 @@ export const useAlarmWorker = () => {
       if (workerRef.current) {
         workerRef.current.terminate();
         workerRef.current = null;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        handlerRef.current.clear();
       }
     };
   }, []);
@@ -41,13 +38,13 @@ export const useAlarmWorker = () => {
   const registerHandler = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (type: AlarmMessageType, handler: (payload: any) => void) => {
-      handlerRef.current.set(type, handler);
+      handlerMap.set(type, handler);
     },
     []
   );
 
   const unregisterHandler = useCallback((type: AlarmMessageType) => {
-    handlerRef.current.delete(type);
+    handlerMap.delete(type);
   }, []);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

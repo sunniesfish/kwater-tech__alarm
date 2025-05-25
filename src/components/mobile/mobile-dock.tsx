@@ -1,5 +1,4 @@
 import { useAlarmDockStore, useMusicDockStore } from "@/store/dock-store";
-import { Button } from "../ui/button";
 import { useEffect, useRef } from "react";
 import { useNavStore, View } from "@/store/nav-store";
 import { useShallow } from "zustand/react/shallow";
@@ -122,40 +121,32 @@ export default function MobileDock() {
 
   return (
     <ul className="w-full flex justify-evenly items-center max-h-[80px] h-12 bg-card">
-      <li>
-        <Button
-          variant={
-            isAlarmDeleteMode || isMusicDeleteMode ? "destructive" : "outline"
-          }
-          onClick={handleDelBtnClick}
-        >
+      <li className="dock-button-container">
+        <button className="dock-button" onClick={handleDelBtnClick}>
           삭제
-        </Button>
+        </button>
       </li>
       {current === View.Alarm ? (
-        <li>
-          <Button
-            variant={isAlarmAddMode ? "default" : "outline"}
-            onClick={handleAddBtnClick}
-          >
+        <li className="dock-button-container">
+          <button className="dock-button" onClick={handleAddBtnClick}>
             추가
-          </Button>
+          </button>
         </li>
       ) : (
-        <li>
+        <li className="dock-button-container">
           <input
             type="file"
-            accept="audio/*"
+            accept=".mp3,.wav,.ogg,.aac,.m4a"
             onChange={handleUploadMusic}
             ref={fileInputRef}
             className="hidden"
           />
-          <Button
-            variant="outline"
+          <button
+            className="dock-button"
             onClick={() => fileInputRef.current?.click()}
           >
             추가
-          </Button>
+          </button>
         </li>
       )}
     </ul>
