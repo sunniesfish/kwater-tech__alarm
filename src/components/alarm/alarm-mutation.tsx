@@ -102,7 +102,7 @@ export default function AlarmMutation() {
 
   return (
     <>
-      <CardContent className="h-full">
+      <CardContent className="h-full overflow-y-auto">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="h-full space-y-4 flex flex-col justify-evenly"
