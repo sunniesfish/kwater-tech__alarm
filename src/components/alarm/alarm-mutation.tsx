@@ -107,10 +107,10 @@ export default function AlarmMutation({ className }: { className?: string }) {
 
   return (
     <>
-      <CardContent className={cn("h-full overflow-y-auto", className)}>
+      <CardContent className={cn("h-full", className)}>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="h-full w-full space-y-4 flex flex-col justify-evenly"
+          className="h-full w-full overflow-y-auto space-y-4 flex flex-col justify-evenly"
         >
           <div className="space-y-2 w-full">
             <Label htmlFor="title" className="text-card-foreground">
@@ -228,7 +228,7 @@ export default function AlarmMutation({ className }: { className?: string }) {
               )}
             />
           </div>
-          <div className="space-y-2 w-full">
+          <div className="space-y-2 w-full h-96">
             <Label htmlFor="music-select" className="text-card-foreground">
               음악
             </Label>
@@ -236,7 +236,7 @@ export default function AlarmMutation({ className }: { className?: string }) {
               name="musicId"
               control={control}
               render={({ field }) => (
-                <div className="space-y-3 max-h-40 overflow-y-auto p-2 border rounded-md bg-input no-scrollbar w-full">
+                <div className="space-y-3 max-h-36 overflow-y-auto p-2 border rounded-md bg-input no-scrollbar w-full">
                   <div className="flex items-center space-x-2 border-b border-input-info">
                     <Checkbox
                       id="music-default"
@@ -252,6 +252,7 @@ export default function AlarmMutation({ className }: { className?: string }) {
                       기본 알람음
                     </Label>
                   </div>
+
                   {musicList.length > 0 ? (
                     musicList.map((music) => (
                       <div
