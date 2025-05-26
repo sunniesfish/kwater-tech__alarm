@@ -1,5 +1,4 @@
 import { Menu, LogIn } from "lucide-react";
-import { Button } from "../ui/button";
 import {
   Select,
   SelectContent,
@@ -9,19 +8,29 @@ import {
 } from "../ui/select";
 import { useDivisionStore } from "@/store/division-store";
 import { useShallow } from "zustand/react/shallow";
+import { useEffect } from "react";
 
 export function HeaderMenu2() {
-  const { currentDivision, setCurrentDivision, divisions } = useDivisionStore(
-    useShallow((state) => ({
-      currentDivision: state.currentDivision,
-      setCurrentDivision: state.setCurrentDivision,
-      divisions: state.divisions,
-    }))
-  );
+  const { currentDivision, setCurrentDivision, divisions, initialize } =
+    useDivisionStore(
+      useShallow((state) => ({
+        currentDivision: state.currentDivision,
+        setCurrentDivision: state.setCurrentDivision,
+        divisions: state.divisions,
+        initialize: state.initialize,
+      }))
+    );
+  useEffect(() => {
+    initialize();
+    if (!currentDivision) {
+      setCurrentDivision(divisions[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div className="mr-4">
       <Select
-        value={currentDivision.divisionId}
+        value={currentDivision?.divisionId}
         onValueChange={(value) =>
           setCurrentDivision(divisions.find((d) => d.divisionId === value)!)
         }
