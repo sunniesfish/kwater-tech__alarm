@@ -8,7 +8,8 @@ import {
 } from "../ui/select";
 import { useDivisionStore } from "@/store/division-store";
 import { useShallow } from "zustand/react/shallow";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { LoginModal } from "../auth/login-modal";
 
 export function HeaderMenu2() {
   const { currentDivision, setCurrentDivision, divisions, initialize } =
@@ -56,15 +57,17 @@ export function HeaderMenu2() {
 
 interface HeaderMenu3Props {
   isLoggedIn?: boolean;
-  onLoginClick?: () => void;
-  onMenuClick?: () => void;
 }
 
 export function HeaderMenu3({
   isLoggedIn = false,
-  onLoginClick,
-  onMenuClick,
+
 }: HeaderMenu3Props) {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const onMenuClick = () =>{}
+  const onLoginClick = () => {}
+
   return (
     <div className="flex justify-end">
       {isLoggedIn ? (
@@ -83,6 +86,7 @@ export function HeaderMenu3({
           <span className="text-xs">매니저</span>
         </button>
       )}
+      <LoginModal isOpen={isOpen} setIsOpen={} />
     </div>
   );
 }
